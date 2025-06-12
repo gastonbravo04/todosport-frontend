@@ -2,76 +2,81 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, InputGroup, Button } from 'react-bootstrap';
 import { FaShoppingCart, FaSearch, FaBars } from 'react-icons/fa';
 
-// Colores más realistas y modernos tipo e-commerce
-const colorPrimario = "#232f3e"; // Azul oscuro Amazon
-const colorSecundario = "#ff9900"; // Naranja Amazon
-const colorFondo = "#f5f5f5"; // Gris claro de fondo
-const colorDetalle = "#232f3e"; // Texto oscuro
+// Main color palette for e-commerce style
+const primaryColor = "#232f3e";
+const secondaryColor = "#ff9900";
+const backgroundColor = "#f5f5f5";
+const detailColor = "#232f3e";
 
-const productosData = [
+// Hardcoded product data
+const productsData = [
   {
-    nombre: "Camiseta Titular Authentic River Plate 24/25",
-    descripcion: "Camiseta oficial Adidas River Plate 2024/2025, tecnología HEAT.RDY.",
-    precio: "$80.000",
-    imagen: "https://essential.vtexassets.com/arquivos/ids/1515816-1200-auto?v=638821480754000000&width=1200&height=auto&aspect=true" },
+    name: "Camiseta Titular Authentic River Plate 24/25",
+    description: "Camiseta oficial Adidas River Plate 2024/2025, tecnología HEAT.RDY.",
+    price: "$80.000",
+    image: "https://essential.vtexassets.com/arquivos/ids/1515816-1200-auto?v=638821480754000000&width=1200&height=auto&aspect=true"
+  },
   {
-    nombre: "Camiseta Titular Argentina 24",
-    descripcion: "Camiseta oficial Adidas Selección Argentina 2024, tecnología AEROREADY.",
-    precio: "$79.999",
-    imagen: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/c4c8dee7623f4209b76dfd333a68c812_9366/Camiseta_Titular_Argentina_24_Blanco_IP8400_01_laydown.jpg"
+    name: "Camiseta Titular Argentina 24",
+    description: "Camiseta oficial Adidas Selección Argentina 2024, tecnología AEROREADY.",
+    price: "$79.999",
+    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/c4c8dee7623f4209b76dfd333a68c812_9366/Camiseta_Titular_Argentina_24_Blanco_IP8400_01_laydown.jpg"
   }
 ];
 
 const Home = () => {
+  // State for menu, search, and products
   const [showMenu, setShowMenu] = useState(false);
-  const [busqueda, setBusqueda] = useState('');
-  const [productos, setProductos] = useState(productosData);
+  const [search, setSearch] = useState('');
+  const [products, setProducts] = useState(productsData);
 
-  // Filtrar por búsqueda
-  const handleBuscar = () => {
-    const filtro = productosData.filter(
+  // Search filter handler
+  const handleSearch = () => {
+    const filtered = productsData.filter(
       prod =>
-        prod.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-        prod.descripcion.toLowerCase().includes(busqueda.toLowerCase())
+        prod.name.toLowerCase().includes(search.toLowerCase()) ||
+        prod.description.toLowerCase().includes(search.toLowerCase())
     );
-    setProductos(filtro);
+    setProducts(filtered);
   };
 
-  // Filtrar por categoría "Camisetas"
-  const handleFiltrarCamisetas = () => {
-    setProductos(productosData.filter(prod =>
-      prod.nombre.toLowerCase().includes("camiseta")
+  // Filter only "Camisetas"
+  const handleFilterCamisetas = () => {
+    setProducts(productsData.filter(prod =>
+      prod.name.toLowerCase().includes("camiseta")
     ));
     setShowMenu(false);
   };
 
-  // Mostrar todos los productos
-  const handleMostrarTodos = () => {
-    setProductos(productosData);
+  // Show all products
+  const handleShowAll = () => {
+    setProducts(productsData);
     setShowMenu(false);
   };
 
-  // Filtrar por categorías vacías
-  const handleFiltrarVacio = () => {
-    setProductos([]);
+  // Show empty for categories not loaded
+  const handleFilterEmpty = () => {
+    setProducts([]);
     setShowMenu(false);
   };
 
+  // Search input change handler
   const handleInputChange = (e) => {
-    setBusqueda(e.target.value);
-    if (e.target.value === "") setProductos(productosData);
+    setSearch(e.target.value);
+    if (e.target.value === "") setProducts(productsData);
   };
 
+  // Search on Enter key
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") handleBuscar();
+    if (e.key === "Enter") handleSearch();
   };
 
   return (
     <div
       style={{
-        background: colorFondo,
+        background: backgroundColor,
         minHeight: '100vh',
-        color: colorDetalle,
+        color: detailColor,
         borderRadius: '0',
         border: 'none',
         margin: '0',
@@ -80,15 +85,15 @@ const Home = () => {
     >
       {/* Header */}
       <Container fluid>
-        <Row className="align-items-center mb-4 position-relative" style={{ background: colorPrimario, borderRadius: "0 0 12px 12px", padding: "10px 0" }}>
+        <Row className="align-items-center mb-4 position-relative" style={{ background: primaryColor, borderRadius: "0 0 12px 12px", padding: "10px 0" }}>
           <Col xs="auto" style={{ position: "relative" }}>
-            {/* Botón menú (tres líneas) */}
+            {/* Menu button (tres líneas) */}
             <Button
               variant="light"
               style={{
-                color: colorPrimario,
+                color: primaryColor,
                 background: "#fff",
-                border: `2px solid ${colorPrimario}`,
+                border: `2px solid ${primaryColor}`,
                 borderRadius: "10px",
                 marginRight: "10px"
               }}
@@ -96,7 +101,7 @@ const Home = () => {
             >
               <FaBars size={28} />
             </Button>
-            {/* Menú lateral */}
+            {/* Side menu */}
             {showMenu && (
               <div
                 style={{
@@ -104,7 +109,7 @@ const Home = () => {
                   top: "45px",
                   left: 0,
                   background: "#fff",
-                  border: `2px solid ${colorPrimario}`,
+                  border: `2px solid ${primaryColor}`,
                   borderRadius: "10px",
                   boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
                   zIndex: 1000,
@@ -116,40 +121,40 @@ const Home = () => {
                 <Button
                   variant="link"
                   className="w-100 text-start"
-                  style={{ color: colorPrimario, fontWeight: "bold" }}
-                  onClick={handleMostrarTodos}
+                  style={{ color: primaryColor, fontWeight: "bold" }}
+                  onClick={handleShowAll}
                 >
                   Todos los productos
                 </Button>
                 <Button
                   variant="link"
                   className="w-100 text-start"
-                  style={{ color: colorPrimario, fontWeight: "bold" }}
-                  onClick={handleFiltrarCamisetas}
+                  style={{ color: primaryColor, fontWeight: "bold" }}
+                  onClick={handleFilterCamisetas}
                 >
                   Camisetas
                 </Button>
                 <Button
                   variant="link"
                   className="w-100 text-start"
-                  style={{ color: colorPrimario, fontWeight: "bold" }}
-                  onClick={handleFiltrarVacio}
+                  style={{ color: primaryColor, fontWeight: "bold" }}
+                  onClick={handleFilterEmpty}
                 >
                   Remeras
                 </Button>
                 <Button
                   variant="link"
                   className="w-100 text-start"
-                  style={{ color: colorPrimario, fontWeight: "bold" }}
-                  onClick={handleFiltrarVacio}
+                  style={{ color: primaryColor, fontWeight: "bold" }}
+                  onClick={handleFilterEmpty}
                 >
                   Camisetas retro
                 </Button>
                 <Button
                   variant="link"
                   className="w-100 text-start"
-                  style={{ color: colorPrimario, fontWeight: "bold" }}
-                  onClick={handleFiltrarVacio}
+                  style={{ color: primaryColor, fontWeight: "bold" }}
+                  onClick={handleFilterEmpty}
                 >
                   Conjuntos deportivos
                 </Button>
@@ -170,28 +175,28 @@ const Home = () => {
             </h1>
           </Col>
           <Col xs="auto" className="text-end">
-            {/* Botón iniciar sesión o registrarse */}
+            {/* Login/Register button */}
             <Button
               variant="light"
               style={{
-                color: colorPrimario,
+                color: primaryColor,
                 fontWeight: "bold",
                 fontSize: "1.1rem",
                 background: "#fff",
-                border: `2px solid ${colorSecundario}`,
+                border: `2px solid ${secondaryColor}`,
                 borderRadius: "10px",
                 marginRight: "10px"
               }}
             >
               iniciar sesion o <br /> registrarse
             </Button>
-            {/* Botón carrito */}
+            {/* Cart button */}
             <Button
               variant="light"
               style={{
-                color: colorSecundario,
+                color: secondaryColor,
                 background: "#fff",
-                border: `2px solid ${colorSecundario}`,
+                border: `2px solid ${secondaryColor}`,
                 borderRadius: "10px"
               }}
             >
@@ -201,30 +206,30 @@ const Home = () => {
         </Row>
       </Container>
 
-      {/* Search */}
+      {/* Search bar */}
       <Container className="my-4 d-flex justify-content-center">
         <InputGroup style={{ maxWidth: '500px', boxShadow: "0 2px 8px #ddd", borderRadius: "8px" }}>
-          {/* Botón lupa */}
+          {/* Search button */}
           <Button
             style={{
-              background: colorSecundario,
-              border: `2px solid ${colorSecundario}`,
+              background: secondaryColor,
+              border: `2px solid ${secondaryColor}`,
               color: "#fff",
               borderRadius: "8px 0 0 8px"
             }}
-            onClick={handleBuscar}
+            onClick={handleSearch}
           >
             <FaSearch />
           </Button>
           <Form.Control
             placeholder="Buscar productos"
-            value={busqueda}
+            value={search}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             style={{
               background: "#fff",
-              color: colorDetalle,
-              border: `2px solid ${colorSecundario}`,
+              color: detailColor,
+              border: `2px solid ${secondaryColor}`,
               borderLeft: 'none',
               borderRadius: "0 8px 8px 0"
             }}
@@ -232,12 +237,12 @@ const Home = () => {
         </InputGroup>
       </Container>
 
-      {/* Productos */}
+      {/* Products grid */}
       <Container>
         <Row className="justify-content-center">
-          {productos.map((producto, i) => (
+          {products.map((product, i) => (
             <Col key={i} xs={12} md={4} className="d-flex justify-content-center mb-4">
-              {/* Botón producto */}
+              {/* Product card */}
               <Button
                 variant="light"
                 className="p-0 w-100"
@@ -247,43 +252,56 @@ const Home = () => {
                   maxWidth: "20rem",
                   background: "#fff",
                   boxShadow: "0 2px 12px #e3e3e3",
-                  transition: "box-shadow 0.2s, border-color 0.2s"
+                  transition: "box-shadow 0.2s, border-color 0.2s",
+                  height: "410px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start"
                 }}
               >
                 <Card
-                  className="w-100"
+                  className="w-100 h-100"
                   style={{
                     background: "transparent",
-                    color: colorDetalle,
+                    color: detailColor,
                     border: "none",
-                    borderRadius: "12px"
+                    borderRadius: "12px",
+                    display: "flex",
+                    flexDirection: "column"
                   }}
                 >
-                  <Card.Img
-                    variant="top"
-                    src={producto.imagen}
-                    alt={producto.nombre}
-                    style={{
-                      height: "180px",
-                      objectFit: "cover",
-                      borderTopLeftRadius: "12px",
-                      borderTopRightRadius: "12px"
-                    }}
-                  />
+                  {/* Product image */}
+                  <div style={{ width: "100%", height: "180px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Card.Img
+                      variant="top"
+                      src={product.image}
+                      alt={product.name}
+                      style={{
+                        maxHeight: "180px",
+                        width: "auto",
+                        maxWidth: "100%",
+                        objectFit: "contain",
+                        borderTopLeftRadius: "12px",
+                        borderTopRightRadius: "12px"
+                      }}
+                    />
+                  </div>
                   <Card.Body
                     className="d-flex flex-column justify-content-between align-items-center"
-                    style={{ minHeight: "170px" }}
+                    style={{ flex: 1, width: "100%", padding: "1rem 0.5rem 0.5rem 0.5rem" }}
                   >
+                    {/* Product name */}
                     <Card.Title
                       className="text-center"
                       style={{
                         fontSize: "1.2rem",
-                        color: colorPrimario,
+                        color: primaryColor,
                         fontWeight: "bold"
                       }}
                     >
-                      {producto.nombre}
+                      {product.name}
                     </Card.Title>
+                    {/* Product description */}
                     <Card.Text
                       className="text-center"
                       style={{
@@ -291,18 +309,20 @@ const Home = () => {
                         color: "#444"
                       }}
                     >
-                      {producto.descripcion}
+                      {product.description}
                     </Card.Text>
+                    <div style={{ flexGrow: 1 }} />
+                    {/* Product price */}
                     <Card.Text
                       className="text-center"
                       style={{
                         fontSize: "1.3rem",
-                        color: colorSecundario,
+                        color: secondaryColor,
                         fontWeight: "bold",
                         marginTop: "10px"
                       }}
                     >
-                      {producto.precio}
+                      {product.price}
                     </Card.Text>
                   </Card.Body>
                 </Card>
@@ -310,7 +330,7 @@ const Home = () => {
             </Col>
           ))}
         </Row>
-        {productos.length === 0 && (
+        {products.length === 0 && (
           <Row className="justify-content-center">
             <Col xs={12} className="text-center text-muted mt-4" style={{ fontSize: "1.2rem" }}>
               No se encontraron productos.

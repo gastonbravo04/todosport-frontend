@@ -68,3 +68,22 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+# todosport
+
+## 🏠 Home Objective
+
+The Home displays a catalog of sports products, allowing users to search, filter, and view relevant information for each item. The goal is to simulate the experience of a modern e-commerce site, showcasing featured products and providing easy navigation for users.
+
+## 🛠️ Technologies Used
+
+- **React**: Main library for building the user interface.
+- **React Bootstrap**: Visual components and responsive grid system.
+- **React Icons**: Modern and customizable icons.
+- **JavaScript (ES6+)**: Logic and data manipulation.
+- **CSS-in-JS**: Inline styles within components for visual customization.
+
+---
+
+_Add any other technologies used in the project_
+
