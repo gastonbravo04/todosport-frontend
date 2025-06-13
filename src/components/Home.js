@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Card, Form, InputGroup, Button } from 'react-bootstrap';
-import { FaShoppingCart, FaSearch, FaBars } from 'react-icons/fa';
+import React, { useState, createContext, useContext } from 'react';
+import { Container, Row, Col, Card, Form, InputGroup, Button, Modal } from 'react-bootstrap';
+import { FaShoppingCart, FaSearch, FaBars, FaHeart } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import ProductModal from './ProductModal';
+import CartModal from './CartModal';
 
 // Main color palette for e-commerce style
 const primaryColor = "#232f3e";
@@ -13,24 +17,101 @@ const productsData = [
   {
     name: "Camiseta Titular Authentic River Plate 24/25",
     description: "Camiseta oficial Adidas River Plate 2024/2025, tecnología HEAT.RDY.",
-    price: "$80.000",
+    price: "$120.000",
     image: "https://essential.vtexassets.com/arquivos/ids/1515816-1200-auto?v=638821480754000000&width=1200&height=auto&aspect=true"
   },
   {
     name: "Camiseta Titular Argentina 24",
     description: "Camiseta oficial Adidas Selección Argentina 2024, tecnología AEROREADY.",
-    price: "$79.999",
+    price: "$100.000",
     image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/c4c8dee7623f4209b76dfd333a68c812_9366/Camiseta_Titular_Argentina_24_Blanco_IP8400_01_laydown.jpg"
+  },
+  {
+    name: "Camiseta Aniversario 50 Años Selección Argentina",
+    description: "Camiseta edición especial Adidas por el 50 aniversario de la Selección Argentina.",
+    price: "$90.000",
+    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/cae76a03cc30414289c3c82a238ad6ed_9366/Camiseta_Aniversario_50_Anos_Seleccion_Argentina_Azul_JF0395_01_laydown.jpg"
+  },
+  {
+    name: "Camiseta Retro Argentina Vintage Calidad Premium #10",
+    description: "Camiseta retro Argentina, calidad premium, número 10. Diseño vintage ideal para coleccionistas y fanáticos.",
+    price: "$95.000",
+    image: "https://http2.mlstatic.com/D_NQ_NP_2X_642238-MLA84972378273_052025-F.webp"
+  },
+  {
+    name: "Conjunto Deportivo Nike Hombre",
+    description: "Conjunto deportivo Nike para hombre, ideal para entrenamiento y uso diario.",
+    price: "$140.000",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVwXnOlaEvFqh4L6GvvCQyGmICAic6t6YTm1oQdcTEogc4g-QitQ0n7NoJHeUv85Wf04A&usqp=CAU"
+  },
+  {
+    name: "Camiseta Titular Boca Juniors 25/26",
+    description: "Camiseta oficial Adidas Boca Juniors 2023/2024, tecnología AEROREADY.",
+    price: "$110.000",
+    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/3d8da5516ef14b4297b562d673589641_9366/Camiseta_Titular_Boca_Juniors_25-26_Azul_JJ4286_01_laydown.jpg"
+  },
+  {
+    name: "Camiseta Puma Independiente Titular 24/25 de Hombre",
+    description: "Camiseta oficial Puma Independiente 2023/2024, tela dryCELL.",
+    price: "$95.000",
+    image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dw77b9ad27/products/PU693681-01/PU693681-01-1.JPG"
   }
 ];
 
-const Home = () => {
-  // State for menu, search, and products
-  const [showMenu, setShowMenu] = useState(false);
-  const [search, setSearch] = useState('');
-  const [products, setProducts] = useState(productsData);
+// Hardcoded users for demo
+const initialUsers = [
+  { username: 'mg.bravo', password: '1234' } // <-- Only this user can login
+];
 
-  // Search filter handler
+const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [users, setUsers] = useState(initialUsers);
+  const [user, setUser] = useState(null);
+
+  // Login function
+  const login = (username, password) => {
+    const found = users.find(u => u.username === username && u.password === password);
+    if (found) {
+      setUser({ username });
+      return true;
+    }
+    return false;
+  };
+
+  // Register function
+  const register = (username, password) => {
+    if (users.find(u => u.username === username)) {
+      return false; // Username already exists
+    }
+    setUsers([...users, { username, password }]);
+    setUser({ username });
+    return true;
+  };
+
+  // Logout function
+  const logout = () => setUser(null);
+
+  return (
+    <AuthContext.Provider value={{ user, login, logout, register }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+const Home = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [cart, setCart] = useState([]);
+  const [showCart, setShowCart] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState(productsData);
+  const [showMenu, setShowMenu] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [showFavs, setShowFavs] = useState(false);
+
   const handleSearch = () => {
     const filtered = productsData.filter(
       prod =>
@@ -40,7 +121,6 @@ const Home = () => {
     setProducts(filtered);
   };
 
-  // Filter only "Camisetas"
   const handleFilterCamisetas = () => {
     setProducts(productsData.filter(prod =>
       prod.name.toLowerCase().includes("camiseta")
@@ -48,27 +128,92 @@ const Home = () => {
     setShowMenu(false);
   };
 
-  // Show all products
-  const handleShowAll = () => {
-    setProducts(productsData);
+  const handleShowAll = () => setProducts(productsData);
+
+  const handleFilterCamisetasRetros = () => {
+    setProducts(productsData.filter(prod =>
+      prod.name.toLowerCase().includes("retro")
+    ));
     setShowMenu(false);
   };
 
-  // Show empty for categories not loaded
+  const handleFilterConjuntosDeportivos = () => {
+    setProducts(productsData.filter(prod =>
+      prod.name.toLowerCase().includes("conjunto deportivo")
+    ));
+    setShowMenu(false);
+  };
+
   const handleFilterEmpty = () => {
     setProducts([]);
     setShowMenu(false);
   };
 
-  // Search input change handler
   const handleInputChange = (e) => {
     setSearch(e.target.value);
     if (e.target.value === "") setProducts(productsData);
   };
 
-  // Search on Enter key
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleSearch();
+  };
+
+  const handleAddToCart = (item) => {
+    setCart([...cart, item]);
+  };
+
+  const handleCartClick = () => {
+    setShowCart(true);
+  };
+
+  const handleProductClick = (product) => {
+    setSelectedProduct(product);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedProduct(null);
+  };
+
+  // Eliminar un producto (por nombre y talle)
+  const handleRemoveItem = (name, size) => {
+    setCart(cart.filter(item => !(item.name === name && item.size === size)));
+  };
+
+  // Vaciar todo el carrito
+  const handleClearCart = () => {
+    setCart([]);
+  };
+
+  // Editar producto (por nombre y talle)
+  const handleEditItem = (item, newSize, newQty) => {
+    setCart(prevCart => {
+      // Elimina el producto original
+      const filtered = prevCart.filter(
+        prod => !(prod.name === item.name && prod.size === item.size)
+      );
+      // Agrega el producto editado
+      const priceNumber = Number(item.price);
+      return [
+        ...filtered,
+        {
+          ...item,
+          size: newSize,
+          quantity: newQty,
+          total: priceNumber * newQty,
+        },
+      ];
+    });
+  };
+
+  // Agregar o quitar favorito
+  const toggleFavorite = (product) => {
+    setFavorites(prev =>
+      prev.some(fav => fav.name === product.name)
+        ? prev.filter(fav => fav.name !== product.name)
+        : [...prev, product]
+    );
   };
 
   return (
@@ -83,6 +228,22 @@ const Home = () => {
         padding: '0'
       }}
     >
+      {/* Welcome banner */}
+      {user && (
+        <div style={{
+          width: "100%",
+          background: "#fffbe6",
+          color: primaryColor,
+          padding: "12px 0",
+          textAlign: "center",
+          fontWeight: "bold",
+          fontSize: "1.1rem",
+          letterSpacing: "1px"
+        }}>
+          Welcome, {user.username}!
+        </div>
+      )}
+
       {/* Header */}
       <Container fluid>
         <Row className="align-items-center mb-4 position-relative" style={{ background: primaryColor, borderRadius: "0 0 12px 12px", padding: "10px 0" }}>
@@ -124,7 +285,7 @@ const Home = () => {
                   style={{ color: primaryColor, fontWeight: "bold" }}
                   onClick={handleShowAll}
                 >
-                  Todos los productos
+                  All products
                 </Button>
                 <Button
                   variant="link"
@@ -146,7 +307,7 @@ const Home = () => {
                   variant="link"
                   className="w-100 text-start"
                   style={{ color: primaryColor, fontWeight: "bold" }}
-                  onClick={handleFilterEmpty}
+                  onClick={handleFilterCamisetasRetros}
                 >
                   Camisetas retro
                 </Button>
@@ -154,7 +315,7 @@ const Home = () => {
                   variant="link"
                   className="w-100 text-start"
                   style={{ color: primaryColor, fontWeight: "bold" }}
-                  onClick={handleFilterEmpty}
+                  onClick={handleFilterConjuntosDeportivos}
                 >
                   Conjuntos deportivos
                 </Button>
@@ -176,31 +337,88 @@ const Home = () => {
           </Col>
           <Col xs="auto" className="text-end">
             {/* Login/Register button */}
+            {user ? (
+              <Button
+                variant="light"
+                style={{
+                  color: primaryColor,
+                  fontWeight: "bold",
+                  fontSize: "1.1rem",
+                  background: "#fff",
+                  border: `2px solid ${secondaryColor}`,
+                  borderRadius: "10px",
+                  marginRight: "10px"
+                }}
+                onClick={() => {
+                  logout();
+                  navigate('/login');
+                }}
+              >
+                Cerrar sesión
+              </Button>
+            ) : (
+              <Button
+                variant="light"
+                style={{
+                  color: primaryColor,
+                  fontWeight: "bold",
+                  fontSize: "1.1rem",
+                  background: "#fff",
+                  border: `2px solid ${secondaryColor}`,
+                  borderRadius: "10px",
+                  marginRight: "10px"
+                }}
+                onClick={() => navigate('/login')}
+              >
+                iniciar sesion o <br /> registrarse
+              </Button>
+            )}
+            {/* Favorites button */}
             <Button
               variant="light"
               style={{
-                color: primaryColor,
-                fontWeight: "bold",
-                fontSize: "1.1rem",
+                color: "#ff3366",
                 background: "#fff",
-                border: `2px solid ${secondaryColor}`,
+                border: `2px solid #ff3366`,
                 borderRadius: "10px",
                 marginRight: "10px"
               }}
+              onClick={() => setShowFavs(true)}
             >
-              iniciar sesion o <br /> registrarse
+              <FaHeart size={24} />
+              {favorites.length > 0 && (
+                <span style={{
+                  background: "#ff3366",
+                  color: "#fff",
+                  borderRadius: "50%",
+                  padding: "2px 8px",
+                  fontSize: 12,
+                  marginLeft: 4
+                }}>{favorites.length}</span>
+              )}
             </Button>
             {/* Cart button */}
             <Button
               variant="light"
               style={{
-                color: secondaryColor,
+                color: "#ff9900",
                 background: "#fff",
-                border: `2px solid ${secondaryColor}`,
+                border: `2px solid #ff9900`,
                 borderRadius: "10px"
               }}
+              onClick={handleCartClick}
             >
               <FaShoppingCart size={28} />
+              {cart.length > 0 && (
+                <span style={{
+                  background: "#ff9900",
+                  color: "#fff",
+                  borderRadius: "50%",
+                  padding: "2px 8px",
+                  fontSize: 12,
+                  marginLeft: 4
+                }}>{cart.length}</span>
+              )}
             </Button>
           </Col>
         </Row>
@@ -258,6 +476,7 @@ const Home = () => {
                   flexDirection: "column",
                   justifyContent: "flex-start"
                 }}
+                onClick={() => handleProductClick(product)}
               >
                 <Card
                   className="w-100 h-100"
@@ -312,18 +531,25 @@ const Home = () => {
                       {product.description}
                     </Card.Text>
                     <div style={{ flexGrow: 1 }} />
-                    {/* Product price */}
-                    <Card.Text
-                      className="text-center"
-                      style={{
-                        fontSize: "1.3rem",
-                        color: secondaryColor,
-                        fontWeight: "bold",
-                        marginTop: "10px"
-                      }}
-                    >
-                      {product.price}
-                    </Card.Text>
+                    {/* Product price and favorite icon */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ fontSize: "1.3rem", color: "#ff9900", fontWeight: "bold", marginRight: 8 }}>
+                        {product.price}
+                      </span>
+                      <FaHeart
+                        size={20}
+                        style={{
+                          color: favorites.some(fav => fav.name === product.name) ? "#ff3366" : "#bbb",
+                          cursor: "pointer",
+                          transition: "color 0.2s"
+                        }}
+                        onClick={e => {
+                          e.stopPropagation();
+                          toggleFavorite(product);
+                        }}
+                        title={favorites.some(fav => fav.name === product.name) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                      />
+                    </div>
                   </Card.Body>
                 </Card>
               </Button>
@@ -338,6 +564,53 @@ const Home = () => {
           </Row>
         )}
       </Container>
+
+      {/* Product detail modal */}
+      {selectedProduct && (
+        <ProductModal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          product={selectedProduct}
+          onAddToCart={handleAddToCart}
+        />
+      )}
+
+      {/* Cart modal */}
+      <CartModal
+        show={showCart}
+        onHide={() => setShowCart(false)}
+        cart={cart}
+        onRemoveItem={handleRemoveItem}
+        onClearCart={handleClearCart}
+        onEditItem={handleEditItem}
+      />
+
+      {/* Favorites modal */}
+      <Modal show={showFavs} onHide={() => setShowFavs(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Favoritos</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {favorites.length === 0 ? (
+            <div className="text-center text-muted">No tienes productos favoritos.</div>
+          ) : (
+            favorites.map((fav, idx) => (
+              <div key={idx} className="d-flex align-items-center mb-2">
+                <img src={fav.image} alt={fav.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, marginRight: 10 }} />
+                <div>
+                  <div style={{ fontWeight: 600 }}>{fav.name}</div>
+                  <div style={{ fontSize: 13, color: "#888" }}>{fav.price}</div>
+                </div>
+              </div>
+            ))
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowFavs(false)}>
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
