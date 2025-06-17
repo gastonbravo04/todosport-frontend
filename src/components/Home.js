@@ -106,7 +106,8 @@ const Home = () => {
   const [showCart, setShowCart] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
   const [products, setProducts] = useState(productsData);
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState([]);
@@ -150,8 +151,20 @@ const Home = () => {
   };
 
   const handleInputChange = (e) => {
-    setSearch(e.target.value);
-    if (e.target.value === "") setProducts(productsData);
+    const value = e.target.value;
+    setSearch(value);
+    if (value === "") {
+      setProducts(productsData);
+      setShowDropdown(false);
+    } else {
+      const filtered = productsData.filter(
+        prod =>
+          prod.name.toLowerCase().includes(value.toLowerCase()) ||
+          prod.description.toLowerCase().includes(value.toLowerCase())
+      );
+      setProducts(filtered);
+      setShowDropdown(true);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -426,33 +439,77 @@ const Home = () => {
 
       {/* Search bar */}
       <Container className="my-4 d-flex justify-content-center">
-        <InputGroup style={{ maxWidth: '500px', boxShadow: "0 2px 8px #ddd", borderRadius: "8px" }}>
-          {/* Search button */}
-          <Button
-            style={{
-              background: secondaryColor,
-              border: `2px solid ${secondaryColor}`,
-              color: "#fff",
-              borderRadius: "8px 0 0 8px"
-            }}
-            onClick={handleSearch}
-          >
-            <FaSearch />
-          </Button>
-          <Form.Control
-            placeholder="Buscar productos"
-            value={search}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            style={{
-              background: "#fff",
-              color: detailColor,
-              border: `2px solid ${secondaryColor}`,
-              borderLeft: 'none',
-              borderRadius: "0 8px 8px 0"
-            }}
-          />
-        </InputGroup>
+        <div style={{ position: "relative", maxWidth: 500, margin: "0 auto" }}>
+          <InputGroup>
+            <Button
+              style={{
+                background: secondaryColor,
+                border: `2px solid ${secondaryColor}`,
+                color: "#fff",
+                borderRadius: "8px 0 0 8px"
+              }}
+            >
+              <FaSearch />
+            </Button>
+            <Form.Control
+              placeholder="Buscar productos"
+              value={search}
+              onChange={handleInputChange}
+              onFocus={() => search && setShowDropdown(true)}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+              style={{
+                background: "#fff",
+                color: detailColor,
+                border: `2px solid ${secondaryColor}`,
+                borderLeft: 'none',
+                borderRadius: "0 8px 8px 0"
+              }}
+            />
+          </InputGroup>
+          {showDropdown && (
+            <div
+              style={{
+                position: "absolute",
+                top: 42,
+                left: 0,
+                right: 0,
+                background: "#fff",
+                border: "1px solid #ddd",
+                borderRadius: "0 0 12px 12px",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.10)",
+                zIndex: 1000,
+                maxHeight: 300,
+                overflowY: "auto"
+              }}
+            >
+              <div style={{ padding: "8px 16px", fontWeight: 600, color: "#888" }}>Productos</div>
+              {products.length === 0 ? (
+                <div style={{ padding: "8px 16px", color: "#bbb" }}>No se encontraron productos.</div>
+              ) : (
+                products.map((prod, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "8px 16px",
+                      cursor: "pointer",
+                      borderBottom: idx !== products.length - 1 ? "1px solid #f0f0f0" : "none"
+                    }}
+                    onMouseDown={() => {
+                      // Aquí puedes abrir el modal del producto o navegar a su detalle
+                      setShowDropdown(false);
+                      handleProductClick(prod);
+                    }}
+                  >
+                    <FaSearch style={{ marginRight: 10, color: "#bbb" }} />
+                    <span>{prod.name}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
       </Container>
 
       {/* Products grid */}
