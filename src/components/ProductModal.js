@@ -1,14 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Image } from 'react-bootstrap';
 
-const sizes = ['S', 'M', 'L', 'XL'];
-
 const ProductModal = ({ show, onHide, product, onAddToCart }) => {
-  const [size, setSize] = useState('M');
+  // Calcula los talles disponibles
+  const availableSizes = product?.sizes || [];
+
+  // Estado para talle y cantidad
+  const [size, setSize] = useState(availableSizes.length > 0 ? availableSizes[0] : "");
   const [quantity, setQuantity] = useState(1);
+
+  // Cuando cambia el producto, setea el talle por defecto
+  useEffect(() => {
+    if (availableSizes.length > 0) {
+      setSize(availableSizes[0]);
+    } else {
+      setSize("");
+    }
+    setQuantity(1);
+    // eslint-disable-next-line
+  }, [product]);
 
   if (!product) return null;
 
+  // Calcula el precio numérico
   const priceNumber = Number(product.price.replace('$', '').replace('.', ''));
   const total = priceNumber * quantity;
 
@@ -31,14 +45,19 @@ const ProductModal = ({ show, onHide, product, onAddToCart }) => {
           </Col>
           <Col xs={7}>
             <div style={{ marginBottom: 12, color: "#555" }}>{product.description}</div>
+            {/* Selector de talle solo si corresponde */}
+            {availableSizes.length > 1 && (
+              <Form.Group className="mb-3">
+                <Form.Label><b>Talle</b></Form.Label>
+                <Form.Select value={size} onChange={e => setSize(e.target.value)}>
+                  {availableSizes.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            )}
             <Form.Group className="mb-3">
-              <Form.Label><b>Size</b></Form.Label>
-              <Form.Select value={size} onChange={e => setSize(e.target.value)}>
-                {sizes.map(s => <option key={s} value={s}>{s}</option>)}
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label><b>Quantity</b></Form.Label>
+              <Form.Label><b>Cantidad</b></Form.Label>
               <Form.Control
                 type="number"
                 min={1}
@@ -55,10 +74,10 @@ const ProductModal = ({ show, onHide, product, onAddToCart }) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="outline-secondary" onClick={onHide}>
-          Cancel
+          Cancelar
         </Button>
-        <Button variant="warning" onClick={handleAdd}>
-          Add to cart
+        <Button variant="warning" onClick={handleAdd} disabled={availableSizes.length > 1 && !size}>
+          Agregar al carrito
         </Button>
       </Modal.Footer>
     </Modal>

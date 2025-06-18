@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, InputGroup, Button, Modal } from 'react-bootstrap';
 import { FaShoppingCart, FaSearch, FaBars, FaHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -16,27 +16,35 @@ const detailColor = "#232f3e";
 const productsData = [
   {
     name: "Camiseta Titular Authentic River Plate 24/25",
-    description: "Camiseta oficial Adidas River Plate 2024/2025, tecnología HEAT.RDY.",
+    description: "Camiseta oficial Adidas River Plate 2024/2025.",
     price: "$120.000",
-    image: "https://essential.vtexassets.com/arquivos/ids/1515816-1200-auto?v=638821480754000000&width=1200&height=auto&aspect=true"
+    image: "https://essential.vtexassets.com/arquivos/ids/1515816-1200-auto?v=638821480754000000&width=1200&height=auto&aspect=true",
+    sizes: ["S", "M", "L", "XL", "XXL"]
+
   },
   {
     name: "Camiseta Titular Argentina 24",
-    description: "Camiseta oficial Adidas Selección Argentina 2024, tecnología AEROREADY.",
+    description: "Camiseta oficial Adidas Selección Argentina 2024.",
     price: "$100.000",
-    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/c4c8dee7623f4209b76dfd333a68c812_9366/Camiseta_Titular_Argentina_24_Blanco_IP8400_01_laydown.jpg"
+    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/c4c8dee7623f4209b76dfd333a68c812_9366/Camiseta_Titular_Argentina_24_Blanco_IP8400_01_laydown.jpg",
+    sizes: ["S", "M", "L", "XL", "XXL"]
+
   },
   {
     name: "Camiseta Aniversario 50 Años Selección Argentina",
     description: "Camiseta edición especial Adidas por el 50 aniversario de la Selección Argentina.",
     price: "$90.000",
-    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/cae76a03cc30414289c3c82a238ad6ed_9366/Camiseta_Aniversario_50_Anos_Seleccion_Argentina_Azul_JF0395_01_laydown.jpg"
+    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/cae76a03cc30414289c3c82a238ad6ed_9366/Camiseta_Aniversario_50_Anos_Seleccion_Argentina_Azul_JF0395_01_laydown.jpg",
+    sizes: ["S", "M", "L", "XL", "XXL"]
+
   },
   {
     name: "Camiseta Retro Argentina Vintage Calidad Premium #10",
     description: "Camiseta retro Argentina, calidad premium, número 10. Diseño vintage ideal para coleccionistas y fanáticos.",
     price: "$95.000",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_642238-MLA84972378273_052025-F.webp"
+    image: "https://http2.mlstatic.com/D_NQ_NP_2X_642238-MLA84972378273_052025-F.webp",
+    sizes: ["S", "M", "L", "XL", "XXL"]
+
   },
   {
     name: "Conjunto Deportivo Nike Hombre",
@@ -48,13 +56,128 @@ const productsData = [
     name: "Camiseta Titular Boca Juniors 25/26",
     description: "Camiseta oficial Adidas Boca Juniors 2023/2024, tecnología AEROREADY.",
     price: "$110.000",
-    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/3d8da5516ef14b4297b562d673589641_9366/Camiseta_Titular_Boca_Juniors_25-26_Azul_JJ4286_01_laydown.jpg"
+    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/3d8da5516ef14b4297b562d673589641_9366/Camiseta_Titular_Boca_Juniors_25-26_Azul_JJ4286_01_laydown.jpg",
+    sizes: ["S", "M", "L", "XL", "XXL"]
   },
   {
     name: "Camiseta Puma Independiente Titular 24/25 de Hombre",
     description: "Camiseta oficial Puma Independiente 2023/2024, tela dryCELL.",
     price: "$95.000",
-    image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dw77b9ad27/products/PU693681-01/PU693681-01-1.JPG"
+    image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dw77b9ad27/products/PU693681-01/PU693681-01-1.JPG",
+    sizes: ["S", "M", "L", "XL", "XXL"]
+  },
+  {
+    name: "Botines Adidas Predator League FG",
+    description: "Botines Adidas Predator League para césped natural. Parte superior sintética con textura para mayor control del balón.",
+    price: "$120.000",
+    image: "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/7e9e2b5e2e7a4e4e8e8e8e8e8e8e8e8e_9366/Botines_Predator_League_FG_Negro_IG7746_01_standard.jpg",
+    sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46]
+  },
+  {
+    name: "Botines Nike Mercurial Vapor 15 Academy",
+    description: "Botines Nike Mercurial Vapor 15 Academy para velocidad y tracción en césped natural. Empeine sintético texturizado.",
+    price: "$135.000",
+    image: "https://static.nike.com/a/images/t_PDP_864_v1/f_auto,q_auto:eco/6e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e/mercurial-vapor-15-academy-fg-mg-botines-de-futbol-terreno-firme-y-multiples-tipos-de-superficie-4w5k2Q.png",
+    sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46]
+  },
+  {
+    name: "Botines Puma Future 7 Pro FG/AG",
+    description: "Botines Puma Future 7 Pro para césped natural y sintético. Ajuste adaptable y excelente tracción.",
+    price: "$110.000",
+    image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/global/107715/01/sv01/fnd/ARG/w/1000/h/1000/fmt/png/Botines-FUTURE-7-Pro-FG/AG",
+    sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46]
+  },
+
+  // Camisetas nuevas 25/26
+  {
+    name: "Camiseta Titular Real Madrid 24/25",
+    description: "Camiseta oficial Adidas Real Madrid temporada 2024/2025.",
+    price: "$95.000",
+    image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRogaCIKvwRzYHX6Hlj3S7I7miNLTwM6c3OMmZBwGaA3aEH1aSwk8gL-q7g2c2D_9xtdFBA-N2OEWbYxfOmLRDBiuQaPb1_-zppyKNhBhsL67eoggu3eIFrj0GM-pUx1VqFgokuHKClpk8&usqp=CAc",
+    sizes: ["S", "M", "L", "XL", "XXL"]
+  },
+  {
+    name: "Camiseta adidas Suplente River Plate 25/26",
+    description: "Camiseta oficial Adidas Suplente River Plate 2025/2026",
+    price: "$92.000",
+    image: "https://sportline.vtexassets.com/arquivos/ids/1605448-1200-auto?v=638853912797670000&width=1200&height=auto&aspect=true",
+    sizes: ["S", "M", "L", "XL", "XXL"]
+  },
+   {
+    name: "Camiseta adidas Titular River Plate 25/26",
+    description: "Camiseta adidas Titular River Plate 25/26 - BLANCO / ROJO",
+    price: "$119.999",
+    image: "https://production.cdn.vaypol.com/variants/gs29wghpjb9j3lz4apn7aedt2025/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
+    sizes: ["S", "M", "L", "XL", "XXL"]
+  },
+
+  // Camisetas retro de equipos
+  {
+    name: "Camiseta Retro Boca Juniors 1981",
+    description: "Camiseta retro Boca Juniors 1981, homenaje a la era de Maradona.",
+    price: "$80.000",
+    image: "https://http2.mlstatic.com/D_NQ_NP_2X_123456-MLA45789012345_042021-F.webp",
+    sizes: ["S", "M", "L", "XL, XXL"]
+  },
+  {
+    name: "Camiseta Retro AC Milan 1994",
+    description: "Camiseta retro AC Milan 1994, campeón de Europa.",
+    price: "$82.000",
+    image: "https://http2.mlstatic.com/D_NQ_NP_2X_789456-MLA45789067890_042021-F.webp",
+    sizes: ["S", "M", "L", "XL, XXL"]
+  },
+
+  // Camisetas de países
+  {
+    name: "Camiseta Titular Brasil 2024",
+    description: "Camiseta oficial Nike Brasil 2024, tecnología Dri-FIT.",
+    price: "$88.000",
+    image: "https://static.nike.com/a/images/t_PDP_864_v1/f_auto,q_auto:eco/brasil-2024.jpg",
+    sizes: ["S", "M", "L", "XL, XXL"]
+  },
+  {
+    name: "Camiseta Titular Alemania 2024",
+    description: "Camiseta oficial Adidas Alemania 2024, diseño clásico.",
+    price: "$89.000",
+    image: "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/alemania-2024.jpg",
+    sizes: ["S", "M", "L", "XL, XXL"]
+  },
+  {
+    name: "Camiseta Retro Francia 1998",
+    description: "Camiseta retro Francia 1998, campeón del mundo.",
+    price: "$85.000",
+    image: "https://http2.mlstatic.com/D_NQ_NP_2X_123456-MLA45789012345_042021-F.webp",
+    sizes: ["S", "M", "L", "XL, XXL"]
+  },
+
+  // Pelotas de fútbol de torneos importantes
+  {
+    name: "Pelota Adidas Euro 2024 Fussballliebe",
+    description: "Pelota oficial Adidas Euro 2024, tecnología de máxima precisión y durabilidad.",
+    price: "$65.000",
+    image: "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/7e8e2e2e2e2e2e2e2e2e2e2e2e2e2e2e_9366/Pelota_Euro_2024_Fussballliebe_Blanco_IN9377_01_standard.jpg",
+    sizes: ["5"]
+  },
+  {
+    name: "Pelota Adidas Champions League Pro 23/24",
+    description: "Pelota oficial Adidas UEFA Champions League 2023/2024, máxima calidad y rendimiento.",
+    price: "$70.000",
+    image: "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/6e7e2e2e2e2e2e2e2e2e2e2e2e2e2e2e_9366/Pelota_Champions_League_Pro_Blanco_IN9378_01_standard.jpg",
+    sizes: ["5"]
+  },
+  {
+    name: "Pelota Nike Flight Premier League 2024",
+    description: "Pelota oficial Nike Flight Premier League 2024, tecnología Aerowsculpt para vuelo preciso.",
+    price: "$72.000",
+    image: "https://static.nike.com/a/images/t_PDP_864_v1/f_auto,q_auto:eco/flight-premier-league-2024.jpg",
+    sizes: ["5"]
+  },
+  {
+    name: "Pelota Nike Ordem Copa América 2024",
+    description: "Pelota oficial Nike Ordem Copa América 2024, diseño exclusivo para el torneo.",
+    price: "$68.000",
+    image: "https://static.nike.com/a/images/t_PDP_864_v1/f_auto,q_auto:eco/ordem-copa-america-2024.jpg",
+    sizes: ["5"]
   }
 ];
 
@@ -112,6 +235,10 @@ const Home = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [showFavs, setShowFavs] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   const handleSearch = () => {
     const filtered = productsData.filter(
@@ -298,7 +425,7 @@ const Home = () => {
                   style={{ color: primaryColor, fontWeight: "bold" }}
                   onClick={handleShowAll}
                 >
-                  All products
+                  Todos los productos 
                 </Button>
                 <Button
                   variant="link"
@@ -307,14 +434,6 @@ const Home = () => {
                   onClick={handleFilterCamisetas}
                 >
                   Camisetas
-                </Button>
-                <Button
-                  variant="link"
-                  className="w-100 text-start"
-                  style={{ color: primaryColor, fontWeight: "bold" }}
-                  onClick={handleFilterEmpty}
-                >
-                  Remeras
                 </Button>
                 <Button
                   variant="link"
@@ -331,6 +450,32 @@ const Home = () => {
                   onClick={handleFilterConjuntosDeportivos}
                 >
                   Conjuntos deportivos
+                </Button>
+                <Button
+                  variant="link"
+                  className="w-100 text-start"
+                  style={{ color: primaryColor, fontWeight: "bold" }}
+                  onClick={() => {
+                    setProducts(productsData.filter(prod =>
+                      prod.name.toLowerCase().includes("botines")
+                    ));
+                    setShowMenu(false);
+                  }}
+                >
+                  Botines
+                </Button>
+                <Button
+                  variant="link"
+                  className="w-100 text-start"
+                  style={{ color: primaryColor, fontWeight: "bold" }}
+                  onClick={() => {
+                    setProducts(productsData.filter(prod =>
+                      prod.name.toLowerCase().includes("pelota")
+                    ));
+                    setShowMenu(false);
+                  }}
+                >
+                  Pelotas de fútbol
                 </Button>
               </div>
             )}

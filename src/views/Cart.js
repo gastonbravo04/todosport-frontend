@@ -35,7 +35,12 @@ const Cart = () => (
     </div>
     <div className="d-flex justify-content-end align-items-center mt-4">
       <h4 className="me-4">Total: $170.000</h4>
-      <button className="btn btn-success btn-lg">Finalizar compra</button>
+      <button
+        className="btn btn-success btn-lg me-2"
+        onClick={() => window.location.href = "/checkout"}
+      >
+        Continuar con el pago
+      </button>
     </div>
   </div>
 );

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Modal, Button, ListGroup, Image, Form } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
 
-const sizes = ['S', 'M', 'L', 'XL'];
+const sizes = ['S', 'M', 'L', 'XL, XXL'];
 
 const CartModal = ({ show, onHide, cart, onRemoveItem, onClearCart, onEditItem }) => {
   const [editIdx, setEditIdx] = useState(null);
   const [editSize, setEditSize] = useState('');
   const [editQty, setEditQty] = useState(1);
+  const navigate = useNavigate();
 
   // Agrupa productos iguales (mismo nombre y talle)
   const grouped = cart.reduce((acc, item, idx) => {
@@ -35,6 +37,7 @@ const CartModal = ({ show, onHide, cart, onRemoveItem, onClearCart, onEditItem }
   const handleSave = (item) => {
     onEditItem(item, editSize, editQty);
     setEditIdx(null);
+    localStorage.setItem("cart", JSON.stringify(cart));
   };
 
   return (
@@ -131,12 +134,24 @@ const CartModal = ({ show, onHide, cart, onRemoveItem, onClearCart, onEditItem }
         <div style={{ flex: 1, fontWeight: 600, fontSize: 18 }}>
           Total: ${total.toLocaleString()}
         </div>
-        <Button variant="outline-danger" onClick={onClearCart}>
-          Clear Cart
-        </Button>
-        <Button variant="secondary" onClick={onHide}>
-          Close
-        </Button>
+        <div className="d-flex justify-content-end gap-2 mt-3">
+          <button
+            className="btn btn-success"
+            onClick={() => {
+              // Si tienes una función para cerrar el modal, llámala aquí:
+              if (typeof onHide === "function") onHide();
+              navigate("/checkout");
+            }}
+          >
+            Continuar con el pago
+          </button>
+          <button className="btn btn-danger" onClick={onClearCart}>
+            Clear Cart
+          </button>
+          <button className="btn btn-secondary" onClick={onHide}>
+            Close
+          </button>
+        </div>
       </Modal.Footer>
     </Modal>
   );
