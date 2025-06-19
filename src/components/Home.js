@@ -70,14 +70,14 @@ const productsData = [
     name: "Botines Adidas Predator League FG",
     description: "Botines Adidas Predator League para césped natural. Parte superior sintética con textura para mayor control del balón.",
     price: "$120.000",
-    image: "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/7e9e2b5e2e7a4e4e8e8e8e8e8e8e8e8e_9366/Botines_Predator_League_FG_Negro_IG7746_01_standard.jpg",
+    image: "https://production.cdn.vaypol.com/variants/anwzc7it4acm4w1wnck315nywcih/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
     sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46]
   },
   {
-    name: "Botines Nike Mercurial Vapor 15 Academy",
-    description: "Botines Nike Mercurial Vapor 15 Academy para velocidad y tracción en césped natural. Empeine sintético texturizado.",
+    name: "Botines Nike Mercurial Vapor 16 Elite",
+    description: "Botines Fútbol Nike Mercurial Vapor 16 Elite FG Hombre.",
     price: "$135.000",
-    image: "https://static.nike.com/a/images/t_PDP_864_v1/f_auto,q_auto:eco/6e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e/mercurial-vapor-15-academy-fg-mg-botines-de-futbol-terreno-firme-y-multiples-tipos-de-superficie-4w5k2Q.png",
+    image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dw4350bb95/products/NIFQ1457-800/NIFQ1457-800-1.JPG",
     sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46]
   },
   {
@@ -116,14 +116,14 @@ const productsData = [
     name: "Camiseta Retro Boca Juniors 1981",
     description: "Camiseta retro Boca Juniors 1981, homenaje a la era de Maradona.",
     price: "$80.000",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_123456-MLA45789012345_042021-F.webp",
+    image: "https://http2.mlstatic.com/D_NQ_NP_2X_709650-MLA76757391603_052024-F.webp",
     sizes: ["S", "M", "L", "XL, XXL"]
   },
   {
     name: "Camiseta Retro AC Milan 1994",
     description: "Camiseta retro AC Milan 1994, campeón de Europa.",
     price: "$82.000",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_789456-MLA45789067890_042021-F.webp",
+    image: "https://http2.mlstatic.com/D_970411-MLA84005601119_042025-C.jpg",
     sizes: ["S", "M", "L", "XL, XXL"]
   },
 
@@ -132,51 +132,44 @@ const productsData = [
     name: "Camiseta Titular Brasil 2024",
     description: "Camiseta oficial Nike Brasil 2024, tecnología Dri-FIT.",
     price: "$88.000",
-    image: "https://static.nike.com/a/images/t_PDP_864_v1/f_auto,q_auto:eco/brasil-2024.jpg",
-    sizes: ["S", "M", "L", "XL, XXL"]
-  },
-  {
-    name: "Camiseta Titular Alemania 2024",
-    description: "Camiseta oficial Adidas Alemania 2024, diseño clásico.",
-    price: "$89.000",
-    image: "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/alemania-2024.jpg",
+    image: "https://www.ole.com.ar/images/2023/12/28/sHplKNs1ai_720x0__1.jpg",
     sizes: ["S", "M", "L", "XL, XXL"]
   },
   {
     name: "Camiseta Retro Francia 1998",
     description: "Camiseta retro Francia 1998, campeón del mundo.",
     price: "$85.000",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_123456-MLA45789012345_042021-F.webp",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuxtahL8ESkvUkT6__9hS3FQg3xLaoC-_DBA&s",
     sizes: ["S", "M", "L", "XL, XXL"]
   },
 
   // Pelotas de fútbol de torneos importantes
   {
-    name: "Pelota Adidas Euro 2024 Fussballliebe",
-    description: "Pelota oficial Adidas Euro 2024, tecnología de máxima precisión y durabilidad.",
+    name: "Pelota adidas Fifa Club World Cup Pro 2025",
+    description: "Esta Pelota adidas Fifa Club World Cup Pro 2025 rinde homenaje al anfitrión de la competencia con un diseño inspirado en las banderas ondeantes y envuelto en las barras y estrellas.",
     price: "$65.000",
-    image: "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/7e8e2e2e2e2e2e2e2e2e2e2e2e2e2e2e_9366/Pelota_Euro_2024_Fussballliebe_Blanco_IN9377_01_standard.jpg",
+    image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dwae33f67e/products/ADJE8770/ADJE8770-1.JPG",
     sizes: ["5"]
   },
   {
-    name: "Pelota Adidas Champions League Pro 23/24",
+    name: "Pelota adidas Ucl Training - VERDE / BLANCO",
     description: "Pelota oficial Adidas UEFA Champions League 2023/2024, máxima calidad y rendimiento.",
     price: "$70.000",
-    image: "https://assets.adidas.com/images/h_840,f_auto,q_auto,fl_lossy,c_fill,g_auto/6e7e2e2e2e2e2e2e2e2e2e2e2e2e2e2e_9366/Pelota_Champions_League_Pro_Blanco_IN9378_01_standard.jpg",
+    image: "https://production.cdn.vaypol.com/variants/3zn4ommy34tdjj7s0qnjts2n9xqw/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
     sizes: ["5"]
   },
   {
-    name: "Pelota Nike Flight Premier League 2024",
+    name: "Premier League Academy",
     description: "Pelota oficial Nike Flight Premier League 2024, tecnología Aerowsculpt para vuelo preciso.",
     price: "$72.000",
-    image: "https://static.nike.com/a/images/t_PDP_864_v1/f_auto,q_auto:eco/flight-premier-league-2024.jpg",
+    image: "https://nikearprod.vtexassets.com/arquivos/ids/1066925-1200-1200?width=1200&height=1200&aspect=true",
     sizes: ["5"]
   },
   {
     name: "Pelota Nike Ordem Copa América 2024",
     description: "Pelota oficial Nike Ordem Copa América 2024, diseño exclusivo para el torneo.",
     price: "$68.000",
-    image: "https://static.nike.com/a/images/t_PDP_864_v1/f_auto,q_auto:eco/ordem-copa-america-2024.jpg",
+    image: "https://acdn-us.mitiendanube.com/stores/003/924/927/products/pelota-copa-americaa-ac8eefef652195eb1c17171891252189-480-0.jpg",
     sizes: ["5"]
   }
 ];
@@ -229,7 +222,8 @@ const Home = () => {
   const [showCart, setShowCart] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [products, setProducts] = useState(productsData);
   const [showMenu, setShowMenu] = useState(false);
@@ -239,6 +233,13 @@ const Home = () => {
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
+
+  const sortedProducts = [...productsData].sort((a, b) => a.name.localeCompare(b.name));
+
+  // Función para filtrar productos según la búsqueda
+  const filteredProducts = sortedProducts.filter(product =>
+    product.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   const handleSearch = () => {
     const filtered = productsData.filter(
@@ -279,7 +280,7 @@ const Home = () => {
 
   const handleInputChange = (e) => {
     const value = e.target.value;
-    setSearch(value);
+    setSearchInput(value);
     if (value === "") {
       setProducts(productsData);
       setShowDropdown(false);
@@ -585,82 +586,28 @@ const Home = () => {
       {/* Search bar */}
       <Container className="my-4 d-flex justify-content-center">
         <div style={{ position: "relative", maxWidth: 500, margin: "0 auto" }}>
-          <InputGroup>
+          <Form className="d-flex" onSubmit={e => { e.preventDefault(); setSearch(searchInput); }}>
+            <Form.Control
+              type="search"
+              placeholder="Buscar productos"
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              style={{ width: 250, marginRight: 8 }}
+            />
             <Button
-              style={{
-                background: secondaryColor,
-                border: `2px solid ${secondaryColor}`,
-                color: "#fff",
-                borderRadius: "8px 0 0 8px"
-              }}
+              variant="warning"
+              onClick={() => setSearch(searchInput)}
             >
               <FaSearch />
             </Button>
-            <Form.Control
-              placeholder="Buscar productos"
-              value={search}
-              onChange={handleInputChange}
-              onFocus={() => search && setShowDropdown(true)}
-              onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-              style={{
-                background: "#fff",
-                color: detailColor,
-                border: `2px solid ${secondaryColor}`,
-                borderLeft: 'none',
-                borderRadius: "0 8px 8px 0"
-              }}
-            />
-          </InputGroup>
-          {showDropdown && (
-            <div
-              style={{
-                position: "absolute",
-                top: 42,
-                left: 0,
-                right: 0,
-                background: "#fff",
-                border: "1px solid #ddd",
-                borderRadius: "0 0 12px 12px",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.10)",
-                zIndex: 1000,
-                maxHeight: 300,
-                overflowY: "auto"
-              }}
-            >
-              <div style={{ padding: "8px 16px", fontWeight: 600, color: "#888" }}>Productos</div>
-              {products.length === 0 ? (
-                <div style={{ padding: "8px 16px", color: "#bbb" }}>No se encontraron productos.</div>
-              ) : (
-                products.map((prod, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px 16px",
-                      cursor: "pointer",
-                      borderBottom: idx !== products.length - 1 ? "1px solid #f0f0f0" : "none"
-                    }}
-                    onMouseDown={() => {
-                      // Aquí puedes abrir el modal del producto o navegar a su detalle
-                      setShowDropdown(false);
-                      handleProductClick(prod);
-                    }}
-                  >
-                    <FaSearch style={{ marginRight: 10, color: "#bbb" }} />
-                    <span>{prod.name}</span>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
+          </Form>
         </div>
       </Container>
 
       {/* Products grid */}
       <Container>
         <Row className="justify-content-center">
-          {products.map((product, i) => (
+          {filteredProducts.map((product, i) => (
             <Col key={i} xs={12} md={4} className="d-flex justify-content-center mb-4">
               {/* Product card */}
               <Button
