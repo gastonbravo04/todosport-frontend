@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
+import { Button } from 'react-bootstrap';
 
 const Login = () => {
   const { login } = useAuth();
@@ -27,6 +28,23 @@ const Login = () => {
         setError('Usuario o contraseña incorrectos');
       }
     }, 800); // Simula una espera de red
+  };
+
+  const handleLogin = async () => {
+    const response = await fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: form.username, password: form.password }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
+      navigate('/'); // Redirigir a Home u otra vista
+    } else {
+      setError("Credenciales inválidas");
+    }
+    setLoading(false);
   };
 
   return (
@@ -91,6 +109,13 @@ const Login = () => {
           {loading ? "Ingresando..." : "Iniciar sesión"}
         </button>
       </form>
+      <Button
+        className="w-100"
+        style={{ background: "#ffcc00", color: "#232f3e", fontWeight: "bold" }}
+        onClick={handleLogin}
+      >
+        Iniciar sesión
+      </Button>
       <p className="mt-3 text-center">
         ¿No tenés cuenta? <a href="/register">Registrate</a>
       </p>
