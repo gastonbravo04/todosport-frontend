@@ -130,7 +130,7 @@ const productsData = [
     description: "Camiseta retro Boca Juniors 1981, homenaje a la era de Maradona.",
     price: "$80.000",
     image: "https://http2.mlstatic.com/D_NQ_NP_2X_709650-MLA76757391603_052024-F.webp",
-    sizes: ["S", "M", "L", "XL, XXL"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
     category: "retro"
   },
   {
@@ -138,7 +138,7 @@ const productsData = [
     description: "Camiseta retro AC Milan 1994, campeón de Europa.",
     price: "$82.000",
     image: "https://http2.mlstatic.com/D_970411-MLA84005601119_042025-C.jpg",
-    sizes: ["S", "M", "L", "XL, XXL"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
     category: "retro"
   },
 
@@ -148,7 +148,7 @@ const productsData = [
     description: "Camiseta oficial Nike Brasil 2024, tecnología Dri-FIT.",
     price: "$88.000",
     image: "https://www.ole.com.ar/images/2023/12/28/sHplKNs1ai_720x0__1.jpg",
-    sizes: ["S", "M", "L", "XL, XXL"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
     category: "camiseta"
   },
   {
@@ -156,7 +156,7 @@ const productsData = [
     description: "Camiseta retro Francia 1998, campeón del mundo.",
     price: "$85.000",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuxtahL8ESkvUkT6__9hS3FQg3xLaoC-_DBA&s",
-    sizes: ["S", "M", "L", "XL, XXL"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
     category: "retro"
   },
 
