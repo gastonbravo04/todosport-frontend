@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, ListGroup, Image, Form } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 
-const sizes = ['S', 'M', 'L', 'XL, XXL'];
+const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
 const CartModal = ({ show, onHide, cart, onRemoveItem, onClearCart, onEditItem }) => {
   const [editIdx, setEditIdx] = useState(null);
