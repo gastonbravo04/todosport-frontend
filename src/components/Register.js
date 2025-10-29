@@ -3,31 +3,53 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
-  const { register } = useAuth();
+  const { register, login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    const success = register(form.username, form.password);
-    if (success) {
-      navigate('/');
-    } else {
-      setError('Username already exists');
+    setError('');
+    setLoading(true);
+    try {
+      const res = await register(form.username, form.password);
+      if (res?.ok) {
+        // Intentar login automático después de registrarse
+        const u = await login(form.username, form.password);
+        if (u?.ok) {
+          navigate('/');
+        } else {
+          // si no logra loguear, redirige a la página de login y muestra error
+          setError(u?.error || 'Registro correcto pero no se pudo iniciar sesión.');
+          navigate('/login');
+        }
+      } else {
+        // Mapear errores de red a un mensaje más claro en español
+        const err = res?.error || 'No se pudo registrar. Verificá los datos.';
+        if (typeof err === 'string' && err.toLowerCase().includes('failed to fetch')) {
+          setError('No se pudo conectar con el servidor backend. ¿Está corriendo?');
+        } else {
+          setError(err);
+        }
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div style={{ maxWidth: 350, margin: "60px auto", background: "#fff", padding: 32, borderRadius: 12, boxShadow: "0 2px 12px #e3e3e3" }}>
-      <h2 style={{ textAlign: "center", marginBottom: 24 }}>Register</h2>
+      <h2 style={{ textAlign: "center", marginBottom: 24 }}>Registrarse</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label>Username</label>
+          <label>Usuario</label>
           <input
             className="form-control"
             name="username"
@@ -38,7 +60,7 @@ const Register = () => {
           />
         </div>
         <div className="mb-3">
-          <label>Password</label>
+          <label>Contraseña</label>
           <input
             className="form-control"
             name="password"
@@ -49,10 +71,12 @@ const Register = () => {
           />
         </div>
         {error && <div className="text-danger mb-2">{error}</div>}
-        <button type="submit" className="btn btn-success w-100">Register</button>
+        <button type="submit" className="btn btn-success w-100" disabled={loading}>
+          {loading ? 'Registrando...' : 'Registrarse'}
+        </button>
       </form>
       <p className="mt-3 text-center">
-        Already have an account? <a href="/login">Login</a>
+        ¿Ya tenés una cuenta? <a href="/login">Iniciar sesión</a>
       </p>
     </div>
   );
