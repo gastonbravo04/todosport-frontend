@@ -22,9 +22,14 @@ const Login = () => {
     const res = await login(form.username, form.password);
     setLoading(false);
     if (res?.ok) {
-      navigate('/');
+      // Si el usuario es staff, lo llevamos al panel de admin
+      if (res.user?.is_staff) navigate('/admin');
+      else navigate('/');
     } else {
-      const msg = res?.error || 'Usuario o contraseña incorrectos';
+      let msg = res?.error || 'Usuario o contraseña incorrectos';
+      if (msg === 'No active account found with the given credentials') {
+        msg = 'Tu usuario o contraseña son incorrectos';
+      }
       setError(msg);
     }
   };

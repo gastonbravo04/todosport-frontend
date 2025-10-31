@@ -6,6 +6,8 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Logout from "./components/Logout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import StaffRoute from "./routes/StaffRoute";
+import AdminPanel from "./views/AdminPanel";
 import Checkout from "./views/Checkout";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -14,17 +16,19 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          {/* RUTA PRINCIPAL AHORA PÚBLICA */}
           <Route
             path="/"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
+            element={<Home />}
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/checkout" element={<Checkout />} />
+
+          {/* Rutas administrativas: solo personal/staff */}
+          <Route element={<StaffRoute />}>
+            <Route path="/admin" element={<AdminPanel />} />
+          </Route>
         </Routes>
       </Router>
     </AuthProvider>

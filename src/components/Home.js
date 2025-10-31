@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ProductModal from './ProductModal';
 import CartModal from './CartModal';
+import { useProducts } from '../context/ProductContext';
 
 // Main color palette for e-commerce style
 const primaryColor = "#232f3e";
@@ -12,6 +13,8 @@ const secondaryColor = "#ff9900";
 const backgroundColor = "#f5f5f5";
 const detailColor = "#232f3e";
 
+// Placeholder image cuando no hay imagen en la API/DB
+const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/400x300?text=Sin+imagen';
 // Hardcoded product data
 const productsData = [
   {
@@ -203,7 +206,7 @@ const productsData = [
   {
     name: "Pelota adidas Fifa Club World Cup Pro 2025",
     description: "Esta Pelota adidas Fifa Club World Cup Pro 2025 rinde homenaje al anfitrión de la competencia con un diseño inspirado en las banderas ondeantes y envuelto en las barras y estrellas.",
-    price: "$129.999",
+    price: "$19.999",
     image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dwae33f67e/products/ADJE8770/ADJE8770-1.JPG",
     sizes: ["5"],
     category: "pelota",
@@ -212,7 +215,7 @@ const productsData = [
   {
     name: "Pelota adidas Ucl Training - VERDE / BLANCO",
     description: "Pelota oficial Adidas UEFA Champions League 2023/2024, máxima calidad y rendimiento.",
-    price: "$139.999",
+    price: "$39.999",
     image: "https://production.cdn.vaypol.com/variants/3zn4ommy34tdjj7s0qnjts2n9xqw/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
     sizes: ["5"],
     category: "pelota",
@@ -221,7 +224,7 @@ const productsData = [
   {
     name: "Pelota Premier League Academy",
     description: "Pelota oficial Nike Flight Premier League 2024, tecnología Aerowsculpt para vuelo preciso.",
-    price: "$79.999",
+    price: "$29.999",
     image: "https://nikearprod.vtexassets.com/arquivos/ids/1066925-1200-1200?width=1200&height=1200&aspect=true",
     sizes: ["5"],
     category: "pelota",
@@ -230,29 +233,25 @@ const productsData = [
   {
     name: "Pelota Nike Ordem Copa América 2024",
     description: "Pelota oficial Nike Ordem Copa América 2024, diseño exclusivo para el torneo.",
-    price: "$89.999",
+    price: "$39.999",
     image: "https://acdn-us.mitiendanube.com/stores/003/924/927/products/pelota-copa-americaa-ac8eefef652195eb1c17171891252189-480-0.jpg",
     sizes: ["5"],
     category: "pelota",
     brand: "Nike"
   },
   {
-        name: "Pelota Trionda Competition de la Copa Mundial de la FIFA 2026",
-        description: "Pelota oficial Adidas Trionda Competition de la Copa Mundial de la FIFA 2026, diseño de alto rendimiento.",
-        price: "$179.999",
-        image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/3a5965320eeb418bb674cc98e81c7f6a_9366/Pelota_Trionda_Competition_de_la_Copa_Mundial_de_la_FIFA_2026tm_Blanco_JD8031_01_00_standard.jpg",
-        sizes: ["5"],
-        category: "pelota",
-        brand: "Adidas"
+    name: "Pelota Trionda Competition de la Copa Mundial de la FIFA 2026",
+    description: "Pelota oficial Adidas Trionda Competition de la Copa Mundial de la FIFA 2026, diseño de alto rendimiento.",
+    price: "$99.999",
+    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/3a5965320eeb418bb674cc98e81c7f6a_9366/Pelota_Trionda_Competition_de_la_Copa_Mundial_de_la_FIFA_2026tm_Blanco_JD8031_01_00_standard.jpg",
+    sizes: ["5"],
+    category: "pelota",
+    brand: "Adidas"
   },
 ];
 
-// *******************************************************************
-// Identificamos la pelota del Mundial para el botón de compra
-const WORLD_CUP_BALL = productsData.find(p => 
-    p.name.includes("Pelota Trionda Competition")
-);
-// *******************************************************************
+// Nota: Ya no fijamos WORLD_CUP_BALL desde productsData.
+// Lo derivaremos dinámicamente del estado con datos del backend.
 
 
 // Hardcoded users for demo
@@ -298,13 +297,20 @@ export const AuthProvider = ({ children }) => {
 
 const Home = () => {
     const { user, logout } = useAuth();
+    const { allProducts, loading, error } = useProducts();
     const navigate = useNavigate();
     const [cart, setCart] = useState([]);
     const [showCart, setShowCart] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [searchInput, setSearchInput] = useState("");
-    const [products, setProducts] = useState(productsData);
+    // allProducts: fuente única (backend si está disponible, sino fallback local)
+    // allProducts proviene del ProductContext
+    const [products, setProducts] = useState([]);
+    // Sincroniza productos mostrados con los productos globales del contexto
+    useEffect(() => {
+        setProducts(allProducts && allProducts.length ? allProducts : productsData);
+    }, [allProducts]);
     const [showMenu, setShowMenu] = useState(false);
     const [favorites, setFavorites] = useState([]);
     const [showFavs, setShowFavs] = useState(false);
@@ -312,7 +318,18 @@ const Home = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState(null);
-
+    // NUEVA FUNCIÓN: Añadir Favorito al Carrito (SOLUCIÓN AL ERROR)
+    const handleAddFavoriteToCart = (product) => {
+        // Asigna un talle y cantidad por defecto al añadir desde el modal de favoritos
+        const defaultItem = { 
+            ...product,
+            size: product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'Único', 
+            quantity: 1 
+        };
+        handleAddToCart(defaultItem); 
+        setShowFavs(false); // Cierra el modal de favoritos
+        setShowCart(true);  // Opcional: Abre el modal del carrito
+    };
     useEffect(() => {
         localStorage.setItem("cart", JSON.stringify(cart));
     }, [cart]);
@@ -323,7 +340,7 @@ const Home = () => {
 
     // Filtra por marca
     const handleFilterByBrand = (brand) => {
-        setProducts(productsData.filter(prod => prod.brand === brand));
+        setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => prod.brand === brand));
         setSearchInput("");
         setShowSuggestions(false);
         setShowMenu(false);
@@ -340,7 +357,7 @@ const Home = () => {
         setSearchInput("");
         setSuggestions([]);
         setShowSuggestions(false);
-        setProducts(productsData); 
+        setProducts(allProducts && allProducts.length ? allProducts : productsData); 
     };
 
     const handleInputChange = (e) => {
@@ -350,7 +367,8 @@ const Home = () => {
         const searchTerm = value.toLowerCase().trim();
 
         if (searchTerm.length > 1) {
-            const filteredSuggestions = productsData.filter(
+            const baseList = allProducts && allProducts.length ? allProducts : productsData;
+            const filteredSuggestions = baseList.filter(
                 prod =>
                     prod.name.toLowerCase().includes(searchTerm) ||
                     prod.description.toLowerCase().includes(searchTerm) ||
@@ -374,11 +392,11 @@ const Home = () => {
         FUNCIONES DE FILTRADO DEL MENÚ LATERAL Y CARRITO
     ---------------------------------------------------------------------- */
 
-    const handleFilterCamisetas = () => { setProducts(productsData.filter(prod => prod.category === "camiseta")); setShowMenu(false); };
-    const handleShowAll = () => { setProducts(productsData); setShowMenu(false); };
-    const handleFilterCamisetasRetros = () => { setProducts(productsData.filter(prod => prod.category === "retro")); setShowMenu(false); };
-    const handleFilterBotines = () => { setProducts(productsData.filter(prod => prod.category === "botines")); setShowMenu(false); };
-    const handleFilterPelotas = () => { setProducts(productsData.filter(prod => prod.category === "pelota")); setShowMenu(false); };
+    const handleFilterCamisetas = () => { setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => prod.category === "camiseta")); setShowMenu(false); };
+    const handleShowAll = () => { setProducts(allProducts && allProducts.length ? allProducts : productsData); setShowMenu(false); };
+    const handleFilterCamisetasRetros = () => { setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => prod.category === "retro")); setShowMenu(false); };
+    const handleFilterBotines = () => { setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => prod.category === "botines")); setShowMenu(false); };
+    const handleFilterPelotas = () => { setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => prod.category === "pelota")); setShowMenu(false); };
     const handleFilterEmpty = () => { setProducts([]); setShowMenu(false); };
     
     const handleAddToCart = (item) => {
@@ -453,7 +471,7 @@ const Home = () => {
                     padding: "12px 0", textAlign: "center", fontWeight: "bold",
                     fontSize: "1.1rem", letterSpacing: "1px"
                 }}>
-                    Welcome, {user.username}!
+                    Bienvenido, {user.username}!
                 </div>
             )}
 
@@ -483,11 +501,11 @@ const Home = () => {
                         )}
                     </Col>
                     <Col>
-                        <h1 className="mb-0" style={{ fontWeight: "bold", fontSize: "2.5rem", color: "#fff", letterSpacing: "2px" }}>todosport</h1>
+                        <h1 className="mb-0" style={{ fontWeight: "bold", fontSize: "2.5rem", color: "#fff", letterSpacing: "2px" }}>TodoSport</h1>
                     </Col>
                     <Col xs="auto" className="text-end">
                         {user ? (
-                            <Button variant="light" style={{ color: primaryColor, fontWeight: "bold", fontSize: "1.1rem", background: "#fff", border: `2px solid ${secondaryColor}`, borderRadius: "10px", marginRight: "10px" }} onClick={() => { logout(); navigate('/login'); }}>Cerrar sesión</Button>
+                            <Button variant="light" style={{ color: primaryColor, fontWeight: "bold", fontSize: "1.1rem", background: "#fff", border: `2px solid ${secondaryColor}`, borderRadius: "10px", marginRight: "10px" }} onClick={() => { logout(); navigate('/'); }}>Cerrar sesión</Button>
                         ) : (
                             <Button variant="light" style={{ color: primaryColor, fontWeight: "bold", fontSize: "1.1rem", background: "#fff", border: `2px solid ${secondaryColor}`, borderRadius: "10px", marginRight: "10px" }} onClick={() => navigate('/login')}>iniciar sesion o <br /> registrarse</Button>
                         )}
@@ -501,6 +519,50 @@ const Home = () => {
                         </Button>
                     </Col>
                 </Row>
+            </Container>
+
+            {/* Search bar y Dropdown de Sugerencias (movido arriba del carousel) */}
+            <Container className="my-4 d-flex justify-content-center">
+                <div className="w-100" style={{ position: "relative", maxWidth: 500 }}>
+                    <Form className="d-flex" onSubmit={e => e.preventDefault()}>
+                        <Form.Control
+                            type="search"
+                            placeholder="Escribe para buscar productos..."
+                            value={searchInput}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}
+                            className="w-100"
+                            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                            onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
+                        />
+                        {/* Botón de Limpiar Búsqueda o Lupa */}
+                        {searchInput.length > 0 ? (
+                            <Button variant="danger" className="ms-2" onClick={handleClearSearch} title="Limpiar búsqueda">X</Button>
+                        ) : (
+                            <Button variant="warning" className="ms-2" onClick={() => { /* No hace falta lógica aquí */ }}><FaSearch /></Button>
+                        )}
+                    </Form>
+
+                    {/* DROPDOWN DE SUGERENCIAS */}
+                    {showSuggestions && suggestions.length > 0 && (
+                        <div className="position-absolute w-100 bg-white border border-top-0 rounded-bottom shadow" style={{ zIndex: 1000, maxHeight: '300px', overflowY: 'auto' }}>
+                            {suggestions.map((product, index) => (
+                                <div
+                                    key={index}
+                                    className="p-2 border-bottom d-flex align-items-center"
+                                    style={{ cursor: 'pointer', backgroundColor: '#fff' }}
+                                    onMouseDown={() => handleSelectSuggestion(product)}
+                                >
+                                    <FaSearch size={14} className="me-2 text-muted" />
+                                    <div>
+                                        <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: primaryColor }}>{product.name}</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#666' }}>Marca: {product.brand}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </Container>
 
             {/* 1. BANNER PRINCIPAL CON MOVIMIENTO (Carousel con Productos Destacados) */}
@@ -530,7 +592,10 @@ const Home = () => {
                                     fontWeight: 'bold',
                                     zIndex: 200, 
                                 }}
-                                onClick={() => handleProductClick(WORLD_CUP_BALL)}
+                                onClick={() => {
+                                    const wcBall = allProducts.find(p => p.name.includes("Pelota Trionda Competition"));
+                                    if (wcBall) handleProductClick(wcBall);
+                                }}
                             >
                                 COMPRAR AHORA →
                             </Button>
@@ -539,7 +604,7 @@ const Home = () => {
                     </Carousel.Item>
 
                     {/* SLIDES DINÁMICOS: Productos destacados */}
-                    {productsData.slice(0, 4).map((product, index) => (
+                    {allProducts.slice(0, 4).map((product, index) => (
                         <Carousel.Item key={index}>
                             <div 
                                 className="d-flex align-items-center justify-content-around text-white p-5"
@@ -552,10 +617,12 @@ const Home = () => {
                                 {/* Contenido Dinámico: Imagen y Detalles */}
                                 <div style={{ width: '40%', textAlign: 'center' }}>
                                     <img
-                                        src={product.image}
+                                        src={product.image || PLACEHOLDER_IMAGE}
                                         alt={product.name}
                                         className="img-fluid"
                                         style={{ maxHeight: '350px', objectFit: 'contain' }}
+                                        loading="lazy"
+                                        onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_IMAGE; }}
                                     />
                                 </div>
                                 <div style={{ width: '50%', color: '#fff' }}>
@@ -611,49 +678,7 @@ const Home = () => {
             </Container>
 
 
-            {/* Search bar y Dropdown de Sugerencias */}
-            <Container className="my-4 d-flex justify-content-center">
-                <div className="w-100" style={{ position: "relative", maxWidth: 500 }}>
-                    <Form className="d-flex" onSubmit={e => e.preventDefault()}> 
-                        <Form.Control
-                            type="search"
-                            placeholder="Escribe para buscar productos..."
-                            value={searchInput}
-                            onChange={handleInputChange} 
-                            onKeyDown={handleKeyDown}
-                            className="w-100"
-                            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                            onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
-                        />
-                        {/* Botón de Limpiar Búsqueda o Lupa */}
-                        {searchInput.length > 0 ? (
-                            <Button variant="danger" className="ms-2" onClick={handleClearSearch} title="Limpiar búsqueda">X</Button>
-                        ) : (
-                            <Button variant="warning" className="ms-2" onClick={() => { /* No hace falta lógica aquí */ }}><FaSearch /></Button>
-                        )}
-                    </Form>
-
-                    {/* DROPDOWN DE SUGERENCIAS */}
-                    {showSuggestions && suggestions.length > 0 && (
-                        <div className="position-absolute w-100 bg-white border border-top-0 rounded-bottom shadow" style={{ zIndex: 1000, maxHeight: '300px', overflowY: 'auto' }}>
-                            {suggestions.map((product, index) => (
-                                <div 
-                                    key={index} 
-                                    className="p-2 border-bottom d-flex align-items-center"
-                                    style={{ cursor: 'pointer', backgroundColor: '#fff' }}
-                                    onMouseDown={() => handleSelectSuggestion(product)} 
-                                >
-                                    <FaSearch size={14} className="me-2 text-muted" />
-                                    <div>
-                                        <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: primaryColor }}>{product.name}</div>
-                                        <div style={{ fontSize: '0.8rem', color: '#666' }}>Marca: {product.brand}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </Container>
+            {/* Search bar moved above; original location removed to avoid duplication */}
 
             {/* Products grid */}
             <Container>
@@ -674,8 +699,10 @@ const Home = () => {
                                 <div style={{ width: "100%", height: "180px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                     <Card.Img
                                         variant="top"
-                                        src={product.image}
+                                        src={product.image || PLACEHOLDER_IMAGE}
                                         alt={product.name}
+                                        loading="lazy"
+                                        onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_IMAGE; }}
                                         style={{ maxHeight: "180px", width: "auto", maxWidth: "100%", objectFit: "contain", borderTopLeftRadius: "12px", borderTopRightRadius: "12px" }}
                                     />
                                 </div>
@@ -744,21 +771,45 @@ const Home = () => {
                 </Row>
             </Container>
 
-
-            {/* Modals */}
+{/* Modals */}
             {selectedProduct && (<ProductModal show={showModal} onHide={handleCloseModal} product={selectedProduct} onAddToCart={handleAddToCart} />)}
             <CartModal show={showCart} onHide={() => setShowCart(false)} cart={cart} onRemoveItem={handleRemoveItem} onClearCart={handleClearCart} onEditItem={handleEditItem} />
+            
+            {/* MODAL DE FAVORITOS (CORREGIDO: Solo Navegación) */}
             <Modal show={showFavs} onHide={() => setShowFavs(false)} centered>
                 <Modal.Header closeButton><Modal.Title>Favoritos</Modal.Title></Modal.Header>
                 <Modal.Body>
-                    {favorites.length === 0 ? (<div className="text-center text-muted">No tienes productos favoritos.</div>) : (
-                        favorites.map((fav, idx) => (<div key={idx} className="d-flex align-items-center mb-2">
-                            <img src={fav.image} alt={fav.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, marginRight: 10 }} />
-                            <div>
-                                <div style={{ fontWeight: 600 }}>{fav.name}</div>
-                                <div style={{ fontSize: 13, color: "#888" }}>{fav.price}</div>
+                    {favorites.length === 0 ? (
+                        <div className="text-center text-muted">No tienes productos favoritos.</div>
+                    ) : (
+                        favorites.map((fav, idx) => (
+                            // INICIO: Bloque de un favorito - AHORA TODO ES CLIQUEABLE
+                            <div 
+                                key={idx} 
+                                className="d-flex align-items-center mb-3 p-2 border rounded" 
+                                style={{ background: '#f8f8f8', cursor: 'pointer' }}
+                                // Conectamos el clic para cerrar Favoritos y abrir Detalles del Producto
+                                onClick={() => {
+                                    setShowFavs(false); 
+                                    handleProductClick(fav); 
+                                }}
+                            >
+                                {/* Contenido del producto */}
+                                <div className="d-flex align-items-center" style={{ flexGrow: 1 }}>
+                                    <img 
+                                        src={fav.image} 
+                                        alt={fav.name} 
+                                        style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 8, marginRight: 10 }} 
+                                    />
+                                    <div>
+                                        <div style={{ fontWeight: 600, color: primaryColor }}>{fav.name}</div>
+                                        <div style={{ fontSize: 13, color: "#888" }}>{fav.price}</div>
+                                    </div>
+                                </div> 
+                                {/* ELIMINADO: El Botón Añadir al Carrito */}
                             </div>
-                        </div>))
+                            // FIN: Bloque de un favorito
+                        ))
                     )}
                 </Modal.Body>
                 <Modal.Footer><Button variant="secondary" onClick={() => setShowFavs(false)}>Cerrar</Button></Modal.Footer>

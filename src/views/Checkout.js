@@ -2,8 +2,10 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap'; // Usamos componentes de react-bootstrap para la grilla
 import { Modal, Button } from 'react-bootstrap';
+import { useProducts } from '../context/ProductContext';
 
 const Checkout = () => {
+    const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api';
     // Definimos el costo de envío (ejemplo estático) y el umbral para envío gratis
     const SHIPPING_COST = 10000;
     const FREE_SHIPPING_THRESHOLD = 149999; // Gratis a partir de este subtotal
@@ -23,9 +25,11 @@ const Checkout = () => {
     const [lastOrder, setLastOrder] = useState(null);
     const [showThankYou, setShowThankYou] = useState(false);
     const invoiceRef = useRef(null);
+    const expiryRef = useRef(null);
     const navigate = useNavigate();
     const [expiryError, setExpiryError] = useState(null);
     const [cardNumberError, setCardNumberError] = useState(null);
+    const { refreshProducts } = useProducts();
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -113,23 +117,63 @@ const Checkout = () => {
         return (sum % 10) === 0;
     };
 
-    // Maneja y formatea el número de tarjeta: agrupación en bloques de 4 y validación Luhn
+    // Detecta marca básica por BIN
+    const detectBrand = (digits) => {
+        if (/^4/.test(digits)) return 'visa';
+        if (/^(5[1-5]|2[2-7])/.test(digits)) return 'mastercard';
+        return 'other';
+    };
+
+    // Maneja y formatea número de tarjeta (typing o paste) con preservación de cursor
     const handleCardNumberChange = (e) => {
         const input = e.target;
+        const prev = formData.cardNumberDisplay || '';
         const raw = input.value || '';
-        const digits = raw.replace(/[^0-9]/g, '').slice(0, 16);
-        // Formatear en grupos de 4
+    const digits = raw.replace(/\D/g, '').slice(0, 19);
         const groups = digits.match(/.{1,4}/g);
         const display = groups ? groups.join(' ') : '';
-        setFormData(prev => ({ ...prev, cardNumber: digits, cardNumberDisplay: display }));
 
-        // Validar Luhn si completó 16 dígitos
-        if (digits.length === 16) {
+        // Calcular posición de caret considerando espacios automáticos
+        let cursor = input.selectionStart || display.length;
+        const spacesBefore = (prev.slice(0, cursor).match(/\s/g) || []).length;
+        const plainBefore = (prev.slice(0, cursor).replace(/\s/g, '')).length;
+        // Reposicionar según la cantidad de dígitos antes del cursor
+        let newCursor = plainBefore;
+        // Insertar espacios cada 4
+        newCursor += Math.floor((newCursor) / 4);
+        if (newCursor > display.length) newCursor = display.length;
+
+        setFormData(prevState => ({ ...prevState, cardNumber: digits, cardNumberDisplay: display }));
+        const brand = detectBrand(digits);
+        setCardBrand(brand);
+
+        if (digits.length >= 13) {
             const valid = luhnCheck(digits);
             setCardNumberError(valid ? null : 'Número de tarjeta inválido');
         } else {
             setCardNumberError(null);
         }
+
+        setTimeout(() => {
+            try { input.setSelectionRange(newCursor, newCursor); } catch {}
+        }, 0);
+
+        // Autofocus al vencimiento cuando completan la longitud típica
+        try {
+            const done = (brand === 'visa' || brand === 'mastercard') ? digits.length === 16 : digits.length === 19;
+            if (done && expiryRef.current) expiryRef.current.focus();
+        } catch {}
+    };
+
+    const handleCardNumberPaste = (e) => {
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const digits = String(text).replace(/\D/g, '').slice(0, 19);
+        const groups = digits.match(/.{1,4}/g);
+        const display = groups ? groups.join(' ') : '';
+        e.preventDefault();
+        setFormData(prev => ({ ...prev, cardNumber: digits, cardNumberDisplay: display }));
+        setCardBrand(detectBrand(digits));
+        setCardNumberError(digits.length >= 13 && !luhnCheck(digits) ? 'Número de tarjeta inválido' : null);
     };
 
     // Componente Condicional para el Formulario de Tarjeta
@@ -148,9 +192,12 @@ const Checkout = () => {
                     id="cardNumber"
                     name="cardNumber"
                     placeholder="XXXX XXXX XXXX XXXX"
-                    maxLength={19}
+                    maxLength={23}
                     value={formData.cardNumberDisplay || ''}
                     onChange={handleCardNumberChange}
+                    onPaste={handleCardNumberPaste}
+                    inputMode="numeric"
+                    autoComplete="cc-number"
                     required
                 />
                 {cardNumberError && <div className="invalid-feedback">{cardNumberError}</div>}
@@ -167,7 +214,39 @@ const Checkout = () => {
                         maxLength="5"
                         value={formData.cardExpiry || ''}
                         onChange={handleExpiryChange}
+                        onPaste={(ev) => {
+                            const t = (ev.clipboardData || window.clipboardData).getData('text');
+                            const d = String(t).replace(/\D/g, '').slice(0,4);
+                            if (d) {
+                                ev.preventDefault();
+                                const formatted = d.length >= 3 ? `${d.slice(0,2)}/${d.slice(2)}` : d;
+                                setFormData(prev => ({ ...prev, cardExpiry: formatted }));
+                                setExpiryError(null);
+                                setTimeout(() => {
+                                    try { ev.target.setSelectionRange(formatted.length, formatted.length); } catch {}
+                                }, 0);
+                            }
+                        }}
+                        onKeyDown={(ev) => {
+                            // Facilita borrar la barra con backspace
+                            if (ev.key === 'Backspace') {
+                                const v = formData.cardExpiry || '';
+                                const pos = ev.target.selectionStart || 0;
+                                if (pos === 3 && v.includes('/')) {
+                                    ev.preventDefault();
+                                    const merged = (v.slice(0,1) + v.slice(2)).trim();
+                                    ev.target.value = merged;
+                                    setFormData(prev => ({ ...prev, cardExpiry: merged }));
+                                    setTimeout(() => {
+                                        try { ev.target.setSelectionRange(2,2); } catch {}
+                                    }, 0);
+                                }
+                            }
+                        }}
+                        inputMode="numeric"
+                        autoComplete="cc-exp"
                         required
+                        ref={expiryRef}
                     />
                     {expiryError && <div className="invalid-feedback">{expiryError}</div>}
                 </Col>
@@ -224,26 +303,73 @@ const Checkout = () => {
         </form>
     );
 
-        const handleConfirm = () => {
+        const handleConfirm = async () => {
                 if (subtotal === 0) {
                         alert('No hay productos en el carrito. No se puede finalizar la compra.');
                         return;
                 }
+                // 1) Crear la orden en el backend
+                const payload = {
+                    total: Number(finalTotal.toFixed(2)),
+                    status: 'Paid',
+                    shipping: Number(shippingCharge.toFixed(2)),
+                    payment_method: payment,
+                    card_type: payment === 'Tarjeta' ? cardType : null,
+                    card_brand: payment === 'Tarjeta' ? cardBrand : null,
+                    installments: payment === 'Tarjeta' ? installments : 1,
+                    // datos mínimos para crear/relacionar un Customer invitado si no hay auth
+                    first_name: formData.firstName,
+                    last_name: formData.lastName,
+                    address: formData.address,
+                    city: formData.city,
+                    zip: formData.zip,
+                    phone: formData.phone || '',
+                    email: formData.email || '',
+                    username: formData.username || formData.email || `guest_${Date.now()}`,
+                    items: cartItems.map(it => ({
+                        product_id: it.product_id,
+                        quantity: it.quantity,
+                        unit_price: Number(it.price)
+                    }))
+                };
 
-                // Simular creación de orden (en un proyecto real haríamos POST a /api/orders/)
-        const order = {
-            id: Date.now(),
-            date: new Date().toLocaleString(),
-            items: cartItems,
-            subtotal,
-            shipping: shippingCharge,
-            total: finalTotal,
-            customer: formData,
-            payment_method: payment,
-            card_type: payment === 'Tarjeta' ? cardType : null,
-            card_brand: payment === 'Tarjeta' ? cardBrand : null,
-            installments: payment === 'Tarjeta' ? installments : 1,
-        };
+                let created = null;
+                try {
+                    const res = await fetch(`${API_BASE}/orders/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json().catch(() => null);
+                    if (!res.ok) {
+                        // Si el backend devolvió error (por ejemplo, stock insuficiente)
+                        const msg = (data && (data.detail || data.error || data.stock || data.items)) || 'No se pudo registrar la compra.';
+                        alert(typeof msg === 'string' ? msg : JSON.stringify(msg));
+                        return; // no generamos factura local si el backend rechazó
+                    } else {
+                        created = data; // { order_id, customer, total, status, date }
+                        // Refrescamos productos para reflejar la baja de stock
+                        try { await refreshProducts(); } catch {}
+                    }
+                } catch (e) {
+                    console.error('Fallo de red creando la orden', e);
+                    // continuamos con orden local
+                }
+
+                // 2) Preparar objeto de orden para la factura (mezcla datos de backend si existen)
+                const order = {
+                    id: created?.order_id || Date.now(),
+                    date: created?.date ? new Date(created.date).toLocaleString() : new Date().toLocaleString(),
+                    items: cartItems,
+                    subtotal,
+                    shipping: shippingCharge,
+                    total: finalTotal,
+                    customer: formData,
+                    payment_method: payment,
+                    card_type: payment === 'Tarjeta' ? cardType : null,
+                    card_brand: payment === 'Tarjeta' ? cardBrand : null,
+                    installments: payment === 'Tarjeta' ? installments : 1,
+                };
 
                 setLastOrder(order);
                 setShowInvoice(true);
