@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Register from './components/Register';
 import Login from './components/Login';
 import PrivateRoute from './routes/PrivateRoute';
@@ -17,7 +17,9 @@ const App = () => {
       {/* Rutas Públicas */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/" element={<Home />} />
+  {/* Home sólo en /home; / redirige a /home */}
+  <Route path="/home" element={<Home />} />
+  <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="/product/:productId" element={<ProductDetail />} />
 
       {/* Rutas Privadas (solo para usuarios autenticados) */}

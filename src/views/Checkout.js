@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap'; // Usamos componentes de react-bootstrap para la grilla
 import { Modal, Button } from 'react-bootstrap';
 import { useProducts } from '../context/ProductContext';
+import { useAuth } from '../context/AuthContext';
 
 const Checkout = () => {
     const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api';
@@ -30,6 +31,7 @@ const Checkout = () => {
     const [expiryError, setExpiryError] = useState(null);
     const [cardNumberError, setCardNumberError] = useState(null);
     const { refreshProducts } = useProducts();
+    const { authFetch, token } = useAuth();
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -335,14 +337,16 @@ const Checkout = () => {
 
                 let created = null;
                 try {
-                    const res = await fetch(`${API_BASE}/orders/`, {
+                    // Use authFetch when token is present so orders tie to authenticated user
+                    const fetchFn = token ? authFetch : fetch;
+                    const res = await fetchFn(`${API_BASE}/orders/`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
                     const data = await res.json().catch(() => null);
                     if (!res.ok) {
-                        // Si el backend devolvió error (por ejemplo, stock insuficiente)
+                        // Mostrar detalle provisto por backend si existe
                         const msg = (data && (data.detail || data.error || data.stock || data.items)) || 'No se pudo registrar la compra.';
                         alert(typeof msg === 'string' ? msg : JSON.stringify(msg));
                         return; // no generamos factura local si el backend rechazó
@@ -353,7 +357,8 @@ const Checkout = () => {
                     }
                 } catch (e) {
                     console.error('Fallo de red creando la orden', e);
-                    // continuamos con orden local
+                    alert('Fallo de red al intentar crear la orden. Revisá la consola del navegador.');
+                    return;
                 }
 
                 // 2) Preparar objeto de orden para la factura (mezcla datos de backend si existen)
@@ -547,7 +552,7 @@ const Checkout = () => {
                         <button
                             type="button"
                             className="btn btn-link w-100 mt-1 text-decoration-none"
-                            onClick={() => navigate('/')}
+                            onClick={() => navigate('/home')}
                         >
                             Volver al inicio
                         </button>
@@ -670,7 +675,7 @@ const Checkout = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowThankYou(false)}>Cerrar</Button>
-                    <Button variant="primary" onClick={() => { window.location.href = '/'; }}>Volver al inicio</Button>
+                    <Button variant="primary" onClick={() => { window.location.href = '/home'; }}>Volver al inicio</Button>
                 </Modal.Footer>
             </Modal>
         </div>

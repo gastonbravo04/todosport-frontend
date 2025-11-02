@@ -1,14 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
-import { AuthProvider } from './context/AuthContext';
+import App from './App.js';
 import { ProductProvider } from './context/ProductContext';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <AuthProvider>
-    <ProductProvider>
-      <App />
-    </ProductProvider>
-  </AuthProvider>
+  <ProductProvider>
+    <App />
+  </ProductProvider>
 );
