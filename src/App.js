@@ -4,10 +4,8 @@ import { AuthProvider } from "./context/AuthContext";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Logout from "./components/Logout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StaffRoute from "./routes/StaffRoute";
-import NonStaffRoute from "./routes/NonStaffRoute";
 import AdminPanel from "./views/AdminPanel";
 import Checkout from "./views/Checkout";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -17,12 +15,13 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Home en /home y redirección desde / */}
-          <Route path="/home" element={<NonStaffRoute><Home /></NonStaffRoute>} />
+          {/* Home en /home y redirección desde / (pública) */}
+          <Route path="/home" element={<Home />} />
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/checkout" element={<Checkout />} />
+          {/* Checkout requiere estar autenticado */}
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
 
           {/* Rutas administrativas: solo personal/staff */}
           <Route element={<StaffRoute />}>

@@ -334,6 +334,22 @@ const Home = () => {
         localStorage.setItem("cart", JSON.stringify(cart));
     }, [cart]);
 
+    // Si el usuario autenticado es staff/administrador, no permitimos
+    // que navegue por la Home pública (según requerimiento).
+    // Comportamiento: cerramos su sesión y lo redirigimos a /login.
+    useEffect(() => {
+        if (user && user.is_staff) {
+            // Desloguear al admin y forzar pantalla de login
+            try {
+                logout();
+            } catch (e) {
+                // si logout no es una función o falla, ignoramos y redirigimos
+            }
+            navigate('/login');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
+
     /* ----------------------------------------------------------------------
         FUNCIONES DE FILTRADO Y BÚSQUEDA
     ---------------------------------------------------------------------- */
@@ -400,6 +416,11 @@ const Home = () => {
     const handleFilterEmpty = () => { setProducts([]); setShowMenu(false); };
     
     const handleAddToCart = (item) => {
+        // Si el usuario no está logueado, lo mandamos a login (comportamiento tipo e-commerce)
+        if (!user) {
+            navigate('/login');
+            return;
+        }
         const cleanedPrice = item.price.toString().replace('$', '').replace(/\./g, '');
         const priceNumber = Number(cleanedPrice);
 
@@ -440,6 +461,11 @@ const Home = () => {
     const handleRemoveItem = (name, size) => { setCart(cart.filter(item => !(item.name === name && item.size === size))); };
     const handleClearCart = () => { setCart([]); };
     const toggleFavorite = (product) => {
+        // Requiere login para guardar favoritos estilo e-commerce
+        if (!user) {
+            navigate('/login');
+            return;
+        }
         setFavorites(prev =>
             prev.some(fav => fav.name === product.name)
                 ? prev.filter(fav => fav.name !== product.name)

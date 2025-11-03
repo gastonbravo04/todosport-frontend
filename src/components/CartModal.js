@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, ListGroup, Image, Form } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 
 // Mapas de talles por tipo de producto
 const SHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -30,6 +31,7 @@ const CartModal = ({ show, onHide, cart, onRemoveItem, onEliminarCarrito, onClea
   const [editSize, setEditSize] = useState('');
   const [editCantidad, setEditCantidad] = useState(1);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Agrupa productos iguales (mismo nombre y talle)
   const grouped = cart.reduce((acc, item, idx) => {
@@ -197,12 +199,17 @@ const CartModal = ({ show, onHide, cart, onRemoveItem, onEliminarCarrito, onClea
         <div style={{ flex: 1, fontWeight: 600, fontSize: 18 }}>
           Total: ${total.toLocaleString()}
         </div>
-        <div className="d-flex justify-content-end gap-2 mt-3">
+          <div className="d-flex justify-content-end gap-2 mt-3">
           <button
             className="btn btn-success"
             onClick={() => {
               // Si tienes una función para cerrar el modal, llámala aquí:
               if (typeof onHide === "function") onHide();
+              // Requerir login antes de ir a checkout
+              if (!user) {
+                navigate('/login');
+                return;
+              }
               navigate("/checkout");
             }}
           >
