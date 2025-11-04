@@ -19,9 +19,7 @@ const Checkout = () => {
     // Simulación de los datos del carrito (asumo que 'total' es el subtotal de los productos)
     // Usamos la misma convención que en Home: almacenar carritos por usuario con la clave
     // `cart_<username>`; para invitados usamos `cart_guest`.
-    const { authFetch, token } = useAuth();
-    // Obtener user desde el contexto (si existe)
-    const { user } = useAuth();
+    const { authFetch, token, user, logout } = useAuth();
     const cartKey = (user && user.username) ? `cart_${user.username}` : 'cart_guest';
     const cartItems = JSON.parse(localStorage.getItem(cartKey) || '[]');
     const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -42,6 +40,20 @@ const Checkout = () => {
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
+
+    // Si un admin (is_staff) intenta acceder al checkout, lo deslogueamos y redirigimos
+    // a la pantalla de login — mismo comportamiento que en `Home`.
+    React.useEffect(() => {
+        if (user && user.is_staff) {
+            try {
+                logout();
+            } catch (e) {
+                // ignore
+            }
+            navigate('/login');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user && user.username]);
 
     // Maneja y formatea el input de vencimiento: MM/AA
     const handleExpiryChange = (e) => {
