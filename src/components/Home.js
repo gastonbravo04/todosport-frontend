@@ -7,15 +7,15 @@ import ProductModal from './ProductModal';
 import CartModal from './CartModal';
 import { useProducts } from '../context/ProductContext';
 
-// Main color palette for e-commerce style
+// Paleta de colores principal para el estilo e-commerce
 const primaryColor = "#232f3e";
 const secondaryColor = "#ff9900";
 const backgroundColor = "#f5f5f5";
 const detailColor = "#232f3e";
 
-// Placeholder image cuando no hay imagen en la API/DB
+// Imagen por defecto cuando no hay imagen en la API/BD
 const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/400x300?text=Sin+imagen';
-// Hardcoded product data
+// Datos de productos predefinidos (mock)
 const productsData = [
   {
     name: "Camiseta Titular Authentic River Plate 24/25",
@@ -254,45 +254,45 @@ const productsData = [
 // Lo derivaremos dinámicamente del estado con datos del backend.
 
 
-// Hardcoded users for demo
+// Usuarios predefinidos para demo
 const initialUsers = [
-  { username: 'mg.bravo', password: '1234' } // <-- Only this user can login
+    { username: 'mg.bravo', password: '1234' } // <-- Solo este usuario puede iniciar sesión en el demo
 ];
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [users, setUsers] = useState(initialUsers);
-  const [user, setUser] = useState(null);
+    const [users, setUsers] = useState(initialUsers);
+    const [user, setUser] = useState(null);
 
-  // Login function
-  const login = (username, password) => {
-    const found = users.find(u => u.username === username && u.password === password);
-    if (found) {
-      setUser({ username });
-      return true;
-    }
-    return false;
-  };
+    // Función de login (demo local)
+    const login = (username, password) => {
+        const found = users.find(u => u.username === username && u.password === password);
+        if (found) {
+            setUser({ username });
+            return true;
+        }
+        return false;
+    };
 
-  // Register function
-  const register = (username, password) => {
-    if (users.find(u => u.username === username)) {
-      return false; // Username already exists
-    }
-    setUsers([...users, { username, password }]);
-    setUser({ username });
-    return true;
-  };
+    // Función de registro (demo local)
+    const register = (username, password) => {
+        if (users.find(u => u.username === username)) {
+            return false; // El nombre de usuario ya existe
+        }
+        setUsers([...users, { username, password }]);
+        setUser({ username });
+        return true;
+    };
 
-  // Logout function
-  const logout = () => setUser(null);
+    // Función de logout (demo local)
+    const logout = () => setUser(null);
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, register }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ user, login, logout, register }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 const Home = () => {
