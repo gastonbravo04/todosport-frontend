@@ -5,9 +5,12 @@ const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/ap
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user') || 'null'));
-  const [token, setToken] = useState(() => localStorage.getItem('token'));
-  const [refreshToken, setRefreshToken] = useState(() => localStorage.getItem('refreshToken'));
+  // By default do NOT auto-rehydrate user/token on startup to allow browsing as guest.
+  // Set REACT_APP_AUTO_LOGIN=true in .env if you want previous (persisted) behaviour.
+  const autoLogin = process.env.REACT_APP_AUTO_LOGIN === 'true';
+  const [user, setUser] = useState(() => (autoLogin ? JSON.parse(localStorage.getItem('user') || 'null') : null));
+  const [token, setToken] = useState(() => (autoLogin ? localStorage.getItem('token') : null));
+  const [refreshToken, setRefreshToken] = useState(() => (autoLogin ? localStorage.getItem('refreshToken') : null));
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
