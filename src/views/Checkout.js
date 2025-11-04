@@ -17,7 +17,13 @@ const Checkout = () => {
     const [formData, setFormData] = useState({}); // Estado para datos del formulario de envío y pago
 
     // Simulación de los datos del carrito (asumo que 'total' es el subtotal de los productos)
-    const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    // Usamos la misma convención que en Home: almacenar carritos por usuario con la clave
+    // `cart_<username>`; para invitados usamos `cart_guest`.
+    const { authFetch, token } = useAuth();
+    // Obtener user desde el contexto (si existe)
+    const { user } = useAuth();
+    const cartKey = (user && user.username) ? `cart_${user.username}` : 'cart_guest';
+    const cartItems = JSON.parse(localStorage.getItem(cartKey) || '[]');
     const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     // Calcular cargo de envío según umbral
     const shippingCharge = subtotal === 0 ? 0 : (subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST);
@@ -31,7 +37,7 @@ const Checkout = () => {
     const [expiryError, setExpiryError] = useState(null);
     const [cardNumberError, setCardNumberError] = useState(null);
     const { refreshProducts } = useProducts();
-    const { authFetch, token } = useAuth();
+    
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -410,7 +416,8 @@ const Checkout = () => {
 
         const handleFinalizeFromInvoice = () => {
             // Simular confirmación final: vaciar carrito y mostrar mensaje de agradecimiento
-            localStorage.removeItem('cart');
+            // Eliminar el carrito correspondiente al usuario actual (o guest)
+            try { localStorage.removeItem(cartKey); } catch (e) { /* ignore */ }
             setShowInvoice(false);
             // Guardamos el lastOrder por si queremos mostrar número en el agradecimiento
             setShowThankYou(true);

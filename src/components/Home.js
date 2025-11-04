@@ -1,7 +1,7 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Modal, Carousel } from 'react-bootstrap';
 import { FaShoppingCart, FaSearch, FaBars, FaHeart } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ProductModal from './ProductModal';
 import CartModal from './CartModal';
@@ -299,6 +299,7 @@ const Home = () => {
     const { user, logout } = useAuth();
     const { allProducts, loading, error } = useProducts();
     const navigate = useNavigate();
+    const location = useLocation();
     const [cart, setCart] = useState([]);
     const [showCart, setShowCart] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -328,11 +329,63 @@ const Home = () => {
         };
         handleAddToCart(defaultItem); 
         setShowFavs(false); // Cierra el modal de favoritos
-        setShowCart(true);  // Opcional: Abre el modal del carrito
+        // Abrir el carrito navegando a /carrito para que la URL refleje el estado
+        navigate('/carrito');
     };
+    // Cargar el carrito una sola vez al montar (intentar rehidratar por usuario guardado)
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cart));
-    }, [cart]);
+        try {
+            const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+            const username = (user && user.username) || (storedUser && storedUser.username) || null;
+            const key = username ? `cart_${username}` : 'cart_guest';
+            const raw = localStorage.getItem(key);
+            if (raw) {
+                setCart(JSON.parse(raw));
+            }
+        } catch (e) {
+            // Ignorar fallos de parseo
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Cuando el usuario cambia (login/logout), cargamos o vaciamos el carrito según corresponda.
+    // Objetivo: cada usuario tiene su propio carrito (`cart_<username>`) y al desloguear
+    // el carrito visible se vacía (comportamiento para guest).
+    useEffect(() => {
+        try {
+            const username = user && user.username;
+            if (username) {
+                // Cargar carrito del usuario autenticado (reemplaza el carrito actual)
+                const key = `cart_${username}`;
+                const raw = localStorage.getItem(key);
+                if (raw) setCart(JSON.parse(raw)); else setCart([]);
+            } else {
+                // Usuario se deslogueó o está como guest -> vaciar carrito en UI
+                setCart([]);
+                // Opcional: eliminar el carrito guest almacenado para evitar confusiones
+                try { localStorage.removeItem('cart_guest'); } catch (e) { /* ignore */ }
+            }
+        } catch (e) {
+            // Ignorar errores de parseo/storage
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user && user.username]);
+
+    // Guardar el carrito en localStorage usando una clave por usuario cuando cambie
+    useEffect(() => {
+        try {
+            const username = user && user.username;
+            const key = username ? `cart_${username}` : 'cart_guest';
+            localStorage.setItem(key, JSON.stringify(cart));
+        } catch (e) {
+            // Ignorar errores de storage
+        }
+    }, [cart, user && user.username]);
+
+    // Sincronizar apertura del modal del carrito con la ruta /carrito
+    useEffect(() => {
+        setShowCart(location.pathname === '/carrito');
+    }, [location.pathname]);
 
     // Si el usuario autenticado es staff/administrador, no permitimos
     // que navegue por la Home pública (según requerimiento).
@@ -344,6 +397,7 @@ const Home = () => {
                 logout();
             } catch (e) {
                 // si logout no es una función o falla, ignoramos y redirigimos
+                // Ignorar error en logout
             }
             navigate('/login');
         }
@@ -455,7 +509,7 @@ const Home = () => {
         });
     };
     
-    const handleCartClick = () => { setShowCart(true); };
+    const handleCartClick = () => { navigate('/carrito'); };
     const handleProductClick = (product) => { setSelectedProduct(product); setShowModal(true); };
     const handleCloseModal = () => { setShowModal(false); setSelectedProduct(null); };
     const handleRemoveItem = (name, size) => { setCart(cart.filter(item => !(item.name === name && item.size === size))); };
@@ -799,7 +853,15 @@ const Home = () => {
 
 {/* Modals */}
             {selectedProduct && (<ProductModal show={showModal} onHide={handleCloseModal} product={selectedProduct} onAddToCart={handleAddToCart} />)}
-            <CartModal show={showCart} onHide={() => setShowCart(false)} cart={cart} onRemoveItem={handleRemoveItem} onClearCart={handleClearCart} onEditItem={handleEditItem} />
+            {/* Sincronizamos la apertura del modal con la ruta: /carrito abre el modal */}
+            <CartModal
+                show={showCart}
+                onHide={() => navigate('/home')}
+                cart={cart}
+                onRemoveItem={handleRemoveItem}
+                onClearCart={handleClearCart}
+                onEditItem={handleEditItem}
+            />
             
             {/* MODAL DE FAVORITOS (CORREGIDO: Solo Navegación) */}
             <Modal show={showFavs} onHide={() => setShowFavs(false)} centered>

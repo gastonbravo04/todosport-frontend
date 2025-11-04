@@ -61,7 +61,6 @@ const CartModal = ({ show, onHide, cart, onRemoveItem, onEliminarCarrito, onClea
   const handleSave = (item) => {
     onEditItem(item, editSize, editCantidad);
     setEditIdx(null);
-    localStorage.setItem("cart", JSON.stringify(cart));
   };
 
   const handleClearCartClick = () => {

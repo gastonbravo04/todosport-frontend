@@ -17,6 +17,8 @@ function App() {
         <Routes>
           {/* Home en /home y redirección desde / (pública) */}
           <Route path="/home" element={<Home />} />
+          {/* Ruta alternativa para mostrar Home con el modal del carrito abierto */}
+          <Route path="/carrito" element={<Home />} />
           {/* Redirigir la raíz a /home para que la barra de direcciones muestre /home */}
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/login" element={<Login />} />
