@@ -19,32 +19,19 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setTimeout(() => {
-      const success = login(form.username, form.password);
-      setLoading(false);
-      if (success) {
-        navigate('/');
-      } else {
-        setError('Usuario o contraseña incorrectos');
-      }
-    }, 800); // Simula una espera de red
-  };
-
-  const handleLogin = async () => {
-    const response = await fetch("/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: form.username, password: form.password }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-      navigate('/'); // Redirigir a Home u otra vista
-    } else {
-      setError("Credenciales inválidas");
-    }
+    const res = await login(form.username, form.password);
     setLoading(false);
+    if (res?.ok) {
+      // Si el usuario es staff, lo llevamos al panel de admin
+      if (res.user?.is_staff) navigate('/admin');
+      else navigate('/');
+    } else {
+      let msg = res?.error || 'Usuario o contraseña incorrectos';
+      if (msg === 'No active account found with the given credentials') {
+        msg = 'Tu usuario o contraseña son incorrectos';
+      }
+      setError(msg);
+    }
   };
 
   return (
@@ -109,13 +96,6 @@ const Login = () => {
           {loading ? "Ingresando..." : "Iniciar sesión"}
         </button>
       </form>
-      <Button
-        className="w-100"
-        style={{ background: "#ffcc00", color: "#232f3e", fontWeight: "bold" }}
-        onClick={handleLogin}
-      >
-        Iniciar sesión
-      </Button>
       <p className="mt-3 text-center">
         ¿No tenés cuenta? <a href="/register">Registrate</a>
       </p>
