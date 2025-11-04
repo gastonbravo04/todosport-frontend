@@ -20,7 +20,8 @@ export const ProductProvider = ({ children }) => {
                 throw new Error(`Error en el fetch: ${res.statusText}`);
             }
             const data = await res.json();
-            const mapped = data.map(p => ({
+            const items = Array.isArray(data) ? data : (data.results || []);
+            const mapped = items.map(p => ({
                 product_id: p.product_id,
                 name: p.name,
                 description: p.description,

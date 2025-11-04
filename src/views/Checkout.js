@@ -34,7 +34,7 @@ const Checkout = () => {
     const navigate = useNavigate();
     const [expiryError, setExpiryError] = useState(null);
     const [cardNumberError, setCardNumberError] = useState(null);
-    const { refreshProducts } = useProducts();
+    const { refreshProducts, allProducts } = useProducts();
     
 
     const handleInputChange = (e) => {
@@ -155,8 +155,7 @@ const Checkout = () => {
 
         // Calcular posición de caret considerando espacios automáticos
         let cursor = input.selectionStart || display.length;
-        const spacesBefore = (prev.slice(0, cursor).match(/\s/g) || []).length;
-        const plainBefore = (prev.slice(0, cursor).replace(/\s/g, '')).length;
+    const plainBefore = (prev.slice(0, cursor).replace(/\s/g, '')).length;
         // Reposicionar según la cantidad de dígitos antes del cursor
         let newCursor = plainBefore;
         // Insertar espacios cada 4
@@ -329,6 +328,15 @@ const Checkout = () => {
                         return;
                 }
                 // 1) Crear la orden en el backend
+                // Asegurarnos de enviar `product_id` que el backend espera.
+                const parsePrice = (v) => {
+                    if (v == null) return 0;
+                    if (typeof v === 'number') return v;
+                    try {
+                        return Number(String(v).replace(/[^0-9.\-]/g, '').replace(/\./g, ''));
+                    } catch { return 0; }
+                };
+
                 const payload = {
                     total: Number(finalTotal.toFixed(2)),
                     status: 'Paid',
@@ -346,11 +354,19 @@ const Checkout = () => {
                     phone: formData.phone || '',
                     email: formData.email || '',
                     username: formData.username || formData.email || `guest_${Date.now()}`,
-                    items: cartItems.map(it => ({
-                        product_id: it.product_id,
-                        quantity: it.quantity,
-                        unit_price: Number(it.price)
-                    }))
+                    items: cartItems.map(it => {
+                        // Intentar obtener product_id directamente o buscando por nombre en allProducts
+                        let product_id = it.product_id || it.product?.product_id || null;
+                        if (!product_id && Array.isArray(allProducts)) {
+                            const found = allProducts.find(p => p.name === it.name || p.product_id === it.product_id);
+                            product_id = found?.product_id || null;
+                        }
+                        return {
+                            product_id,
+                            quantity: it.quantity || 1,
+                            unit_price: parsePrice(it.price || it.unit_price || it.total || 0)
+                        };
+                    })
                 };
 
                 let created = null;

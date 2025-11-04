@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table, Modal, Form, Row, Col, Container, Card } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
+import { useProducts } from '../context/ProductContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdminPanel() {
     const { authFetch, logout, user } = useAuth();
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
+    const prodCtx = useProducts();
+    const refreshProducts = prodCtx?.refreshProducts || (() => {});
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
-    const [form, setForm] = useState({ name: '', description: '', price: 0, stock: 0, image: '', category: '' });
+    const [form, setForm] = useState({ name: '', description: '', price: 0, stock: 0, image: '', category: '', brand: '' });
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -32,7 +35,14 @@ export default function AdminPanel() {
         try {
             const r = await authFetch(`${process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api'}/orders/`);
             const d = await r.json().catch(() => []);
-            setOrders(Array.isArray(d) ? d : d.results || []);
+            // Asegurarnos de mostrar las órdenes más recientes primero (desc por fecha)
+            const raw = Array.isArray(d) ? d : d.results || [];
+            raw.sort((a, b) => {
+                const da = new Date(a.date || a.created_at || a.timestamp || 0).getTime();
+                const db = new Date(b.date || b.created_at || b.timestamp || 0).getTime();
+                return db - da; // descendente
+            });
+            setOrders(raw);
         } catch (e) {
             console.error(e);
         }
@@ -54,7 +64,7 @@ export default function AdminPanel() {
 
     const handleShowCreate = () => {
         setEditing(null);
-        setForm({ name: '', description: '', price: 0, stock: 0, image: '', category: '' });
+        setForm({ name: '', description: '', price: 0, stock: 0, image: '', category: '', brand: '' });
         setShowForm(true);
     };
 
@@ -66,7 +76,8 @@ export default function AdminPanel() {
             price: p.price || 0,
             stock: p.stock || 0,
             image: p.image || '',
-            category: p.category || ''
+            category: p.category || '',
+            brand: p.brand || ''
         });
         setShowForm(true);
     };
@@ -83,13 +94,18 @@ export default function AdminPanel() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const payload = { ...form, price: parseFloat(form.price) || 0, stock: parseInt(form.stock || 0, 10) || 0 };
+            // Asegurarnos que price tenga solo 2 decimales y que brand/description estén presentes
+            const priceNum = Number.isFinite(parseFloat(form.price)) ? parseFloat(parseFloat(form.price).toFixed(2)) : 0;
+            const stockNum = parseInt(form.stock || 0, 10) || 0;
+            const payload = { ...form, price: priceNum, stock: stockNum };
             const url = `${process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api'}/products/${editing ? (editing.product_id || editing.id || editing.pk) + '/' : ''}`;
             const method = editing ? 'PATCH' : 'POST';
             const r = await authFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             if (r.ok) {
                 setShowForm(false);
+                // actualizar la lista local y la global (Home usa ProductContext)
                 fetchProducts();
+                try { refreshProducts(); } catch (e) { /* no crítico si falla */ }
                 window.alert('Guardado con éxito');
             } else {
                 // try parse json error
@@ -161,15 +177,15 @@ export default function AdminPanel() {
                         <tr><th>ID</th><th>Cliente</th><th>Total</th><th>Estado</th><th>Fecha</th></tr>
                     </thead>
                     <tbody>
-                        {orders.slice(0, 20).map(o => (
-                            <tr key={o.id || o.pk} onClick={() => handleOrderClick(o)} style={{ cursor: 'pointer' }}>
-                                <td>{o.id || o.pk}</td>
-                                <td>{o.customer?.name || 'Invitado'}</td>
-                                <td>${o.total}</td>
-                                <td>{o.status}</td>
-                                <td>{o.created_at || 'N/A'}</td>
-                            </tr>
-                        ))}
+                                {orders.slice(0, 20).map(o => (
+                                    <tr key={o.order_id || o.id || o.pk} onClick={() => handleOrderClick(o)} style={{ cursor: 'pointer' }}>
+                                        <td>{o.order_id || o.id || o.pk}</td>
+                                        <td>{o.customer?.username || `${o.customer?.first_name || ''} ${o.customer?.last_name || ''}` || 'Invitado'}</td>
+                                        <td>${o.total}</td>
+                                        <td>{o.status}</td>
+                                        <td>{o.date || o.created_at || 'N/A'}</td>
+                                    </tr>
+                                ))}
                     </tbody>
                 </Table>
                 {/* --- FIN CAMBIOS EN TABLA DE ÓRDENES --- */}
@@ -179,21 +195,21 @@ export default function AdminPanel() {
             {selectedOrder && (
                 <Modal show={true} onHide={() => setSelectedOrder(null)} size="lg">
                     <Modal.Header closeButton>
-                        <Modal.Title>Detalle de la Orden #{selectedOrder.id}</Modal.Title>
+                        <Modal.Title>Detalle de la Orden #{selectedOrder.order_id || selectedOrder.id || selectedOrder.pk}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Row>
                             <Col md={6}>
                                 <h5>Datos del Cliente</h5>
-                                <p><strong>Nombre:</strong> {selectedOrder.customer?.name || 'N/A'}</p>
+                                <p><strong>Nombre:</strong> {selectedOrder.customer ? `${selectedOrder.customer.first_name || ''} ${selectedOrder.customer.last_name || ''}` : 'N/A'}</p>
+                                <p><strong>Username:</strong> {selectedOrder.customer?.username || 'N/A'}</p>
                                 <p><strong>Email:</strong> {selectedOrder.customer?.email || 'N/A'}</p>
                             </Col>
                             <Col md={6}>
                                 <h5>Datos del Pago</h5>
-                                <p><strong>Total:</strong> ${parseFloat(selectedOrder.total).toFixed(2)}</p>
+                                <p><strong>Total:</strong> ${parseFloat(selectedOrder.total || 0).toFixed(2)}</p>
                                 <p><strong>Estado:</strong> {selectedOrder.status}</p>
-                                <p><strong>Método:</strong> {selectedOrder.card_brand ? `${selectedOrder.card_brand} (crédito)` : 'No especificado'}</p>
-                                <p><strong>Tarjeta:</strong> **** **** **** {selectedOrder.card_last4}</p>
+                                <p><strong>Método:</strong> {selectedOrder.card_brand ? `${selectedOrder.card_brand} (crédito)` : (selectedOrder.payment_method || 'No especificado')}</p>
                                 <p><strong>Cuotas:</strong> {selectedOrder.installments || 'N/A'}</p>
                             </Col>
                         </Row>
@@ -207,12 +223,14 @@ export default function AdminPanel() {
                                 {selectedOrder.items?.map((item, index) => (
                                     <tr key={index}>
                                         <td>
-                                            <img src={item.product.image} alt={item.product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }} />
-                                            {item.product.name}
+                                            {item.product?.image && (
+                                                <img src={item.product.image} alt={item.product.name} style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }} />
+                                            )}
+                                            {item.product?.name || item.product}
                                         </td>
                                         <td>{item.quantity}</td>
-                                        <td>${parseFloat(item.price).toFixed(2)}</td>
-                                        <td>${(item.quantity * item.price).toFixed(2)}</td>
+                                        <td>${parseFloat(item.unit_price || item.price || 0).toFixed(2)}</td>
+                                        <td>${parseFloat(item.subtotal || (item.quantity * (item.unit_price || item.price || 0)) ).toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -228,13 +246,14 @@ export default function AdminPanel() {
                 <Form onSubmit={handleSubmit}>
                     <Modal.Body>
                         <Form.Group className="mb-2"><Form.Label>Nombre</Form.Label><Form.Control required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></Form.Group>
-                        <Form.Group className="mb-2"><Form.Label>Descripción</Form.Label><Form.Control value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></Form.Group>
+                        <Form.Group className="mb-2"><Form.Label>Descripción</Form.Label><Form.Control required value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></Form.Group>
                         <Row>
                             <Col><Form.Group className="mb-2"><Form.Label>Precio</Form.Label><Form.Control type="number" step="0.01" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></Form.Group></Col>
                             <Col><Form.Group className="mb-2"><Form.Label>Stock</Form.Label><Form.Control type="number" step="1" value={form.stock} onChange={e => setForm({ ...form, stock: e.target.value })} /></Form.Group></Col>
                             <Col><Form.Group className="mb-2"><Form.Label>Categoria</Form.Label><Form.Control value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} /></Form.Group></Col>
                         </Row>
                         <Form.Group className="mb-2"><Form.Label>Imagen (URL)</Form.Label><Form.Control value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} /></Form.Group>
+                        <Form.Group className="mb-2"><Form.Label>Brand</Form.Label><Form.Control required value={form.brand} onChange={e => setForm({ ...form, brand: e.target.value })} /></Form.Group>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => setShowForm(false)}>Cancelar</Button>
