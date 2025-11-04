@@ -17,7 +17,8 @@ function App() {
         <Routes>
           {/* Home en /home y redirección desde / (pública) */}
           <Route path="/home" element={<Home />} />
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          {/* Mostrar Home en la ruta raíz para que al arrancar el servidor se vea la tienda sin login */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           {/* Checkout requiere estar autenticado */}
