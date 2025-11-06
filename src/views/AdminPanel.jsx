@@ -11,14 +11,14 @@ export default function AdminPanel() {
     const prodCtx = useProducts();
     const refreshProducts = prodCtx?.refreshProducts || (() => {});
     const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [, setLoading] = useState(false);
     
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
     const [form, setForm] = useState({ name: '', description: '', price: 0, stock: 0, image: '', category: '', brand: '' });
 
-    const fetchProducts = async () => {
+    const fetchProducts = React.useCallback(async () => {
         setLoading(true);
         try {
             const res = await fetch(`${process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api'}/products/`);
@@ -29,9 +29,9 @@ export default function AdminPanel() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const fetchOrders = async () => {
+    const fetchOrders = React.useCallback(async () => {
         try {
             const r = await authFetch(`${process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api'}/orders/`);
             const d = await r.json().catch(() => []);
@@ -46,7 +46,7 @@ export default function AdminPanel() {
         } catch (e) {
             console.error(e);
         }
-    };
+    }, [authFetch]);
 
     const handleOrderClick = (order) => {
         setSelectedOrder(order);
@@ -55,7 +55,7 @@ export default function AdminPanel() {
     useEffect(() => {
         fetchProducts();
         fetchOrders();
-    }, []);
+    }, [fetchProducts, fetchOrders]);
 
     const handleLogout = () => {
         logout();

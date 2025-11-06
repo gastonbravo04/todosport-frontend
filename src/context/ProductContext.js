@@ -45,7 +45,7 @@ export const ProductProvider = ({ children }) => {
 
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [fetchProducts]);
 
     const value = {
         allProducts,

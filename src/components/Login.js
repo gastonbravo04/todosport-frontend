@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
-import { Button } from 'react-bootstrap';
 
 const Login = () => {
   const { login } = useAuth();

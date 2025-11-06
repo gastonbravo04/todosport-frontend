@@ -333,7 +333,8 @@ const Checkout = () => {
                     if (v == null) return 0;
                     if (typeof v === 'number') return v;
                     try {
-                        return Number(String(v).replace(/[^0-9.\-]/g, '').replace(/\./g, ''));
+                        // Colocar el guion sin escape dentro de la clase es válido
+                        return Number(String(v).replace(/[^0-9.-]/g, '').replace(/\./g, ''));
                     } catch { return 0; }
                 };
 

@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext, useEffect } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Modal, Carousel } from 'react-bootstrap';
 import { FaShoppingCart, FaSearch, FaBars, FaHeart } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -297,7 +297,7 @@ export const AuthProvider = ({ children }) => {
 
 const Home = () => {
     const { user, logout } = useAuth();
-    const { allProducts, loading, error } = useProducts();
+    const { allProducts } = useProducts();
     const navigate = useNavigate();
     const location = useLocation();
     const [cart, setCart] = useState([]);
@@ -319,19 +319,7 @@ const Home = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState(null);
-    // NUEVA FUNCIÓN: Añadir Favorito al Carrito (SOLUCIÓN AL ERROR)
-    const handleAddFavoriteToCart = (product) => {
-        // Asigna un talle y cantidad por defecto al añadir desde el modal de favoritos
-        const defaultItem = { 
-            ...product,
-            size: product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'Único', 
-            quantity: 1 
-        };
-        handleAddToCart(defaultItem); 
-        setShowFavs(false); // Cierra el modal de favoritos
-        // Abrir el carrito navegando a /carrito para que la URL refleje el estado
-        navigate('/carrito');
-    };
+    // Si en el futuro se necesita, se puede implementar 'añadir favorito al carrito'.
     // Cargar el carrito una sola vez al montar (intentar rehidratar por usuario guardado)
     useEffect(() => {
         try {
@@ -368,8 +356,7 @@ const Home = () => {
         } catch (e) {
             // Ignorar errores de parseo/storage
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user && user.username]);
+    }, [user]);
 
     // Guardar el carrito en localStorage usando una clave por usuario cuando cambie
     useEffect(() => {
@@ -380,7 +367,7 @@ const Home = () => {
         } catch (e) {
             // Ignorar errores de storage
         }
-    }, [cart, user && user.username]);
+    }, [cart, user]);
 
     // Sincronizar apertura del modal del carrito con la ruta /carrito
     useEffect(() => {
@@ -467,7 +454,6 @@ const Home = () => {
     const handleFilterCamisetasRetros = () => { setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => prod.category === "retro")); setShowMenu(false); };
     const handleFilterBotines = () => { setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => prod.category === "botines")); setShowMenu(false); };
     const handleFilterPelotas = () => { setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => prod.category === "pelota")); setShowMenu(false); };
-    const handleFilterEmpty = () => { setProducts([]); setShowMenu(false); };
     
     const handleAddToCart = (item) => {
         // Si el usuario no está logueado, lo mandamos a login (comportamiento tipo e-commerce)
