@@ -6,6 +6,7 @@ import { useProducts } from '../context/ProductContext';
 import { useAuth } from '../context/AuthContext';
 
 const Checkout = () => {
+    // 🛠️ CORRECCIÓN: Apuntar a la URL de producción de Railway
 const API_BASE = 'https://todosport-production.up.railway.app/api';  
   // Definimos el costo de envío (ejemplo estático) y el umbral para envío gratis
     const SHIPPING_COST = 10000;

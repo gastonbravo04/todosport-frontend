@@ -1,40 +1,75 @@
 import React, { useState } from 'react';
-import { login } from '../services/authService';
-import { navigate } from '../services/navigateService';
+// 🛠️ CORRECCIÓN: Importar el hook de autenticación (que tiene la URL de Railway)
+import { useAuth } from '../context/AuthContext';
+// 🛠️ CORRECCIÓN: Importar el hook de navegación de React Router
+import { useNavigate } from 'react-router-dom';
+
+// ❌ Eliminamos imports a servicios que no existen
+// import { login } from '../services/authService';
+// import { navigate } from '../services/navigateService';
 
 const LoginPage = () => {
     const [form, setForm] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false); // <--- Variable necesaria
+    
+    // 🛠️ CORRECCIÓN: Obtener 'login' y 'loading' desde el Contexto
+    const { login, loading } = useAuth();
+    // 🛠️ CORRECCIÓN: Inicializar el hook de navegación
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        setLoading(true);
+        // setLoading(true); // El AuthContext ya maneja el 'loading'
+
         try {
-            const u = await login(form.username, form.password);
-            if (!u) return setError('Credenciales inválidas');
-            // si es staff, a panel de admin; si no, a la tienda
-            navigate(u.is_staff ? '/admin' : '/');
-        } finally {
-            setLoading(false);
-        }
+            // 🛠️ CORRECCIÓN: Usar la función 'login' del Context
+            // Esta función ya llama a la API de Railway y maneja el token.
+            const result = await login(form.username, form.password);
+            
+            if (!result.ok) {
+                // Si la API devuelve un error (ej. 401 Credenciales inválidas)
+                return setError(result.error || 'Credenciales inválidas');
+            }
+            
+            // 🛠️ CORRECCIÓN: Usar 'navigate' de React Router
+            // Redirigir basado en la respuesta del contexto
+            navigate(result.user?.is_staff ? '/admin' : '/home');
+
+        } catch (err) {
+            // Captura errores de red (ej. si Railway está caído)
+            setError(err.message || 'Error de red. Intente de nuevo.');
+        } 
+        // finally {
+        //     setLoading(false); // El AuthContext ya maneja el 'loading'
+        // }
     };
 
     return (
         <div>
             <h2>Iniciar sesión</h2>
             <form onSubmit={handleSubmit}>
-                <input type="text" placeholder="Usuario" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} />
-                <input type="password" placeholder="Contraseña" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+                <input 
+                    type="text" 
+                    placeholder="Usuario" 
+                    value={form.username} 
+                    onChange={(e) => setForm({ ...form, username: e.target.value })} 
+                />
+                <input 
+                    type="password" 
+                    placeholder="Contraseña" 
+                    value={form.password} 
+                    onChange={(e) => setForm({ ...form, password: e.target.value })} 
+                />
                 
-                {/* 🛠️ CORRECCIÓN: Usamos la variable 'loading' para deshabilitar y cambiar el texto */}
+                {/* Usamos la variable 'loading' del Context para deshabilitar */}
                 <button type="submit" disabled={loading}>
                     {loading ? 'Cargando...' : 'Iniciar sesión'} 
                 </button>
 
             </form>
-            {error && <p>{error}</p>}
+            {/* 🛠️ CORRECCIÓN: Muestra el error de la API */}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
     );
 };

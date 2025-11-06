@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+// 🛠️ CORRECCIÓN: Importar la URL centralizada
+import { API_BASE_URL } from '../config';
 
-const API = 'https://todosport-production.up.railway.app/api';
+// 🛠️ CORRECCIÓN: Eliminar la URL local
+// const API = 'https://todosport-production.up.railway.app/api';
 
 export default function Profile() {
 const { authFetch } = useAuth();
-const [data, setData] = useState(null);
-const [err, setErr] = useState('');
-
+// ... (resto del componente)
 useEffect(() => {
     (async () => {
     try {
-        const res = await authFetch(`${API}/user/profile/`);
+        // 🛠️ CORRECCIÓN: Usar la URL importada
+        const res = await authFetch(`${API_BASE_URL}/user/profile/`);
         if (!res.ok) throw new Error((await res.json()).detail || `Error ${res.status}`);
         setData(await res.json());
     } catch (e) { setErr(e.message); }
