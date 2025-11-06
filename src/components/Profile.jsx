@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-const API = 'http://127.0.0.1:8000/api';
+const API = 'https://todosport-production.up.railway.app/api';
 
 export default function Profile() {
 const { authFetch } = useAuth();

@@ -6,7 +6,7 @@ import { useProducts } from '../context/ProductContext';
 import { useAuth } from '../context/AuthContext';
 
 const Checkout = () => {
-    const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api';
+    const API_BASE = process.env.REACT_APP_API_BASE_URL || 'https://todosport-production.up.railway.app/api';
     // Definimos el costo de envío (ejemplo estático) y el umbral para envío gratis
     const SHIPPING_COST = 10000;
     const FREE_SHIPPING_THRESHOLD = 149999; // Gratis a partir de este subtotal
