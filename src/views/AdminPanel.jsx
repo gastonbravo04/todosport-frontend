@@ -85,8 +85,8 @@ export default function AdminPanel() {
     const handleDelete = async (p) => {
         if (!window.confirm('Eliminar producto?')) return;
         try {
-            const r = await authFetch(`${process.env.REACT_APP_API_BASE_URL || 'https://todosport-production.up.railway.app/api'}/products/${p.product_id || p.id || p.pk}/`, { method: 'DELETE' });
-            if (r.ok) fetchProducts();
+            const API_BASE = 'https://todosport-production.up.railway.app/api';
+            await fetch(`${API_BASE}/products/`);            if (r.ok) fetchProducts();
             else alert('No autorizado o error al eliminar');
         } catch (e) { console.error(e); alert('Error al eliminar'); }
     };
@@ -98,7 +98,8 @@ export default function AdminPanel() {
             const priceNum = Number.isFinite(parseFloat(form.price)) ? parseFloat(parseFloat(form.price).toFixed(2)) : 0;
             const stockNum = parseInt(form.stock || 0, 10) || 0;
             const payload = { ...form, price: priceNum, stock: stockNum };
-            const url = `${process.env.REACT_APP_API_BASE_URL || 'https://todosport-production.up.railway.app/api'}/products/${editing ? (editing.product_id || editing.id || editing.pk) + '/' : ''}`;
+            const API_BASE = 'https://todosport-production.up.railway.app/api';
+            await fetch(`${API_BASE}/orders/`);
             const method = editing ? 'PATCH' : 'POST';
             const r = await authFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             if (r.ok) {
