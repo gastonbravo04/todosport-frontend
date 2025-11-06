@@ -1,7 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 
-// Default to the Railway production API. You can override with REACT_APP_API_BASE_URL
-const API_BASE = process.env.REACT_APP_API_BASE_URL || 'https://todosport-production.up.railway.app/api';
+import { API_BASE_URL as API_BASE } from '../config';
 
 const AuthContext = createContext();
 
