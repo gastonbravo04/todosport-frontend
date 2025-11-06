@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api';
+// Default to the Railway production API. You can override with REACT_APP_API_BASE_URL
+const API_BASE = process.env.REACT_APP_API_BASE_URL || 'https://todosport-production.up.railway.app/api';
 
 const AuthContext = createContext();
 

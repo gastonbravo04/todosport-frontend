@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+// Default to the Railway production host. You can override with REACT_APP_API_URL
+const API_URL = process.env.REACT_APP_API_URL || 'https://todosport-production.up.railway.app';
 
 const ProductContext = createContext();
 
