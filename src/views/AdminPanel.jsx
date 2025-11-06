@@ -21,7 +21,8 @@ export default function AdminPanel() {
     const fetchProducts = React.useCallback(async () => {
         setLoading(true);
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_BASE_URL || `https://todosport-production.up.railway.app/api`}/products/`);
+            const API_BASE = 'https://todosport-production.up.railway.app/api';
+            const res = await fetch(`${API_BASE}/products/`);
             const data = await res.json().catch(() => []);
             setProducts(Array.isArray(data) ? data : data.results || []);
         } catch (e) {
@@ -33,7 +34,8 @@ export default function AdminPanel() {
 
     const fetchOrders = React.useCallback(async () => {
         try {
-            const r = await authFetch(`${process.env.REACT_APP_API_BASE_URL || 'https://todosport-production.up.railway.app/api'}/orders/`);
+            const API_BASE = 'https://todosport-production.up.railway.app/api';
+            const r = await authFetch(`${API_BASE}/orders/`);
             const d = await r.json().catch(() => []);
             // Asegurarnos de mostrar las órdenes más recientes primero (desc por fecha)
             const raw = Array.isArray(d) ? d : d.results || [];
@@ -86,7 +88,8 @@ export default function AdminPanel() {
         if (!window.confirm('Eliminar producto?')) return;
         try {
             const API_BASE = 'https://todosport-production.up.railway.app/api';
-            await fetch(`${API_BASE}/products/`);            if (r.ok) fetchProducts();
+            await fetch(`${API_BASE}/products/`);            
+            if (r.ok) fetchProducts();
             else alert('No autorizado o error al eliminar');
         } catch (e) { console.error(e); alert('Error al eliminar'); }
     };
