@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaLock } from 'react-icons/fa';
+import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
   const { login } = useAuth();
@@ -9,6 +9,7 @@ const Login = () => {
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -73,17 +74,28 @@ const Login = () => {
             <FaLock style={{ marginRight: 6, color: "#ff9900" }} />
             Contraseña
           </label>
-          <input
-            className="form-control"
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            disabled={loading}
-            placeholder="Tu contraseña"
-            style={{ borderRadius: 8 }}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <input
+              className="form-control"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              value={form.password}
+              onChange={handleChange}
+              required
+              disabled={loading}
+              placeholder="Tu contraseña"
+              style={{ borderRadius: 8 }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(s => !s)}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              title={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              style={{ cursor: 'pointer', background: 'transparent', border: 'none', padding: 6 }}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
         </div>
         {error && <div className="text-danger mb-2 text-center">{error}</div>}
         <button

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const Register = () => {
   const { register, login } = useAuth();
@@ -8,6 +9,7 @@ const Register = () => {
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -61,14 +63,25 @@ const Register = () => {
         </div>
         <div className="mb-3">
           <label>Contraseña</label>
-          <input
-            className="form-control"
-            name="password"
-            type="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <input
+              className="form-control"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(s => !s)}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              title={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              style={{ cursor: 'pointer', background: 'transparent', border: 'none', padding: 6 }}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
         </div>
         {error && <div className="text-danger mb-2">{error}</div>}
         <button type="submit" className="btn btn-success w-100" disabled={loading}>

@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
     const [form, setForm] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
+    // Mostrar / ocultar contraseña
+    const [showPassword, setShowPassword] = useState(false);
     
     // 🛠️ CORRECCIÓN: Obtener 'login' y 'loading' desde el Contexto
     const { login, loading } = useAuth();
@@ -55,12 +57,23 @@ const LoginPage = () => {
                     value={form.username} 
                     onChange={(e) => setForm({ ...form, username: e.target.value })} 
                 />
-                <input 
-                    type="password" 
-                    placeholder="Contraseña" 
-                    value={form.password} 
-                    onChange={(e) => setForm({ ...form, password: e.target.value })} 
-                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Contraseña"
+                        value={form.password}
+                        onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword((s) => !s)}
+                        aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                        title={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                        style={{ cursor: 'pointer', background: 'transparent', border: 'none', fontSize: 18 }}
+                    >
+                        {showPassword ? '🙈' : '👁️'}
+                    </button>
+                </div>
                 
                 {/* Usamos la variable 'loading' del Context para deshabilitar */}
                 <button type="submit" disabled={loading}>
