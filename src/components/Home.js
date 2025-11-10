@@ -573,7 +573,7 @@ const Home = () => {
                         {user ? (
                             <Button variant="light" style={{ color: primaryColor, fontWeight: "bold", fontSize: "1.1rem", background: "#fff", border: `2px solid ${secondaryColor}`, borderRadius: "10px", marginRight: "10px" }} onClick={() => { logout(); navigate('/'); }}>Cerrar sesión</Button>
                         ) : (
-                            <Button variant="light" style={{ color: primaryColor, fontWeight: "bold", fontSize: "1.1rem", background: "#fff", border: `2px solid ${secondaryColor}`, borderRadius: "10px", marginRight: "10px" }} onClick={() => navigate('/login')}>iniciar sesion o <br /> registrarse</Button>
+                            <Button variant="light" style={{ color: primaryColor, fontWeight: "bold", fontSize: "1.1rem", background: "#fff", border: `2px solid ${secondaryColor}`, borderRadius: "10px", marginRight: "10px" }} onClick={() => navigate('/login')}>iniciar sesión o <br /> registrarse</Button>
                         )}
                         <Button variant="light" style={{ color: "#ff3366", background: "#fff", border: `2px solid #ff3366`, borderRadius: "10px", marginRight: "10px" }} onClick={() => setShowFavs(true)}>
                             <FaHeart size={24} />
