@@ -17,237 +17,237 @@ const detailColor = "#232f3e";
 const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/400x300?text=Sin+imagen';
 // Datos de productos predefinidos (mock)
 const productsData = [
-  {
-    name: "Camiseta Titular Authentic River Plate 24/25",
-    description: "Camiseta oficial Adidas River Plate 2024/2025.",
-    price: "$89.999",
-    image: "https://essential.vtexassets.com/arquivos/ids/1515816-1200-auto?v=638821480754000000&width=1200&height=auto&aspect=true",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Adidas" 
-  },
-  {
-    name: "Camiseta Titular Argentina 24",
-    description: "Camiseta oficial Adidas Selección Argentina 2024.",
-    price: "$79.999",
-    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/c4c8dee7623f4209b76dfd333a68c812_9366/Camiseta_Titular_Argentina_24_Blanco_IP8400_01_laydown.jpg",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Adidas"
-  },
-  {
-    name: "Camiseta Aniversario 50 Años Selección Argentina",
-    description: "Camiseta edición especial Adidas por el 50 aniversario de la Selección Argentina.",
-    price: "$109.999",
-    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/cae76a03cc30414289c3c82a238ad6ed_9366/Camiseta_Aniversario_50_Anos_Seleccion_Argentina_Azul_JF0395_01_laydown.jpg",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Adidas"
-  },
-  {
-    name: "Camiseta Retro Argentina Vintage Calidad Premium #10",
-    description: "Camiseta retro Argentina, calidad premium, número 10. Diseño vintage ideal para coleccionistas y fanáticos.",
-    price: "$99.999",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_642238-MLA84972378273_052025-F.webp",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "retro",
-    brand: "Retro"
-  },
-  {
-    name: "Camiseta Titular Boca Juniors 25/26",
-    description: "Camiseta oficial Adidas Boca Juniors 2023/2024, tecnología AEROREADY.",
-    price: "$109.999",
-    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/3d8da5516ef14b4297b562d673589641_9366/Camiseta_Titular_Boca_Juniors_25-26_Azul_JJ4286_01_laydown.jpg",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Adidas"
-  },
-  {
-    name: "Camiseta Puma Independiente Titular 24/25 de Hombre",
-    description: "Camiseta oficial Puma Independiente 2023/2024, tela dryCELL.",
-    price: "$69.999",
-    image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dw77b9ad27/products/PU693681-01/PU693681-01-1.JPG",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Puma"
-  },
-  {
-    name: "Botines Adidas Predator League FG",
-    description: "Botines Adidas Predator League para césped natural. Parte superior sintética con textura para mayor control del balón.",
-    price: "$199.999",
-    image: "https://production.cdn.vaypol.com/variants/anwzc7it4acm4w1wnck315nywcih/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
-    sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
-    category: "botines",
-    brand: "Adidas"
-  },
-  {
-    name: "Botines Nike Mercurial Vapor 16 Elite",
-    description: "Botines Fútbol Nike Mercurial Vapor 16 Elite FG Hombre.",
-    price: "$199.999",
-    image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dw4350bb95/products/NIFQ1457-800/NIFQ1457-800-1.JPG",
-    sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
-    category: "botines",
-    brand: "Nike"
-  },
-  {
-    name: "Botines Puma Future 7 Pro FG/AG",
-    description: "Botines Puma Future 7 Pro para césped natural y sintético. Ajuste adaptable y excelente tracción.",
-    price: "$149.999",
-    image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/global/107715/01/sv01/fnd/ARG/w/1000/h/1000/fmt/png/Botines-FUTURE-7-Pro-FG/AG",
-    sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
-    category: "botines",
-    brand: "Puma"
-  },
-{
-    name: "Botines Adidas F50 Elite - Terreno Firme (Coral)",
-    description: "Botines Adidas F50 Elite para césped natural, diseño ligero y máxima velocidad.",
-    price: "$299.999", 
-    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/1eb82bc423a3494fb622aa9791fdeed3_9366/Botines_F50_Elite_para_terreno_firme_Naranja_JH7618_HM1.jpg", 
-    sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
-    category: "botines",
-    brand: "Adidas"
-},
-{
-    name: "Botines Adidas F50 Elite - Terreno Firme (Lila/Verde)",
-    description: "Botines Adidas F50 Elite para césped natural, máxima velocidad, colores vibrantes.",
-    price: "$299.999", 
-    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/91f142e473404e57bc06ace8ab1101c5_9366/Botines_F50_Elite_terreno_firme_Violeta_JH7615_HM1.jpg", 
-    sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
-    category: "botines",
-    brand: "Adidas"
-},
-{
-    name: "Botines Nike Phantom 6 Low Elite (Verde/Negro)",
-    description: "Botines de Pasto Natural Unisex FG Nike Phantom para precisión y control élite.",
-    price: "$399.999", 
-    image: "https://nikearprod.vtexassets.com/arquivos/ids/1548257-1200-1200?width=1200&height=1200&aspect=true", 
-    sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
-    category: "botines",
-    brand: "Nike"
-},
-{
-    name: "Botines Nike Phantom 6 Low Elite (Blanco/Rojo)",
-    description: "Botines de Pasto Natural Unisex FG Nike Phantom para precisión y control élite.",
-    price: "$379.999", 
-    image: "https://nikearprod.vtexassets.com/arquivos/ids/1548306-1200-1200?width=1200&height=1200&aspect=true",
-    category: "botines",
-    brand: "Nike"
-},
-  // Camisetas nuevas 25/26
-  {
-    name: "Camiseta Titular Real Madrid 24/25",
-    description: "Camiseta oficial Adidas Real Madrid temporada 2024/2025.",
-    price: "$109.999",
-    image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRogaCIKvwRzYHX6Hlj3S7I7miNLTwM6c3OMmZBwGaA3aEH1aSwk8gL-q7g2c2D_9xtdFBA-N2OEWbYxfOmLRDBiuQaPb1_-zppyKNhBhsL67eoggu3eIFrj0GM-pUx1VqFgokuHKClpk8&usqp=CAc",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Adidas"
-  },
-  {
-    name: "Camiseta adidas Suplente River Plate 25/26",
-    description: "Camiseta oficial Adidas Suplente River Plate 2025/2026",
-    price: "$89.999",
-    image: "https://sportline.vtexassets.com/arquivos/ids/1605448-1200-auto?v=638853912797670000&width=1200&height=auto&aspect=true",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Adidas"
-  },
-  {
-    name: "Camiseta adidas Titular River Plate 25/26",
-    description: "Camiseta adidas Titular River Plate 25/26 - BLANCO / ROJO",
-    price: "$119.999",
-    image: "https://production.cdn.vaypol.com/variants/gs29wghpjb9j3lz4apn7aedt2025/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Adidas"
-  },
+    {
+        name: "Camiseta Titular Authentic River Plate 24/25",
+        description: "Camiseta oficial Adidas River Plate 2024/2025.",
+        price: "$89.999",
+        image: "https://essential.vtexassets.com/arquivos/ids/1515816-1200-auto?v=638821480754000000&width=1200&height=auto&aspect=true",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Adidas"
+    },
+    {
+        name: "Camiseta Titular Argentina 24",
+        description: "Camiseta oficial Adidas Selección Argentina 2024.",
+        price: "$79.999",
+        image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/c4c8dee7623f4209b76dfd333a68c812_9366/Camiseta_Titular_Argentina_24_Blanco_IP8400_01_laydown.jpg",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Adidas"
+    },
+    {
+        name: "Camiseta Aniversario 50 Años Selección Argentina",
+        description: "Camiseta edición especial Adidas por el 50 aniversario de la Selección Argentina.",
+        price: "$109.999",
+        image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/cae76a03cc30414289c3c82a238ad6ed_9366/Camiseta_Aniversario_50_Anos_Seleccion_Argentina_Azul_JF0395_01_laydown.jpg",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Adidas"
+    },
+    {
+        name: "Camiseta Retro Argentina Vintage Calidad Premium #10",
+        description: "Camiseta retro Argentina, calidad premium, número 10. Diseño vintage ideal para coleccionistas y fanáticos.",
+        price: "$99.999",
+        image: "https://http2.mlstatic.com/D_NQ_NP_2X_642238-MLA84972378273_052025-F.webp",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "retro",
+        marca: "Retro"
+    },
+    {
+        name: "Camiseta Titular Boca Juniors 25/26",
+        description: "Camiseta oficial Adidas Boca Juniors 2023/2024, tecnología AEROREADY.",
+        price: "$109.999",
+        image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/3d8da5516ef14b4297b562d673589641_9366/Camiseta_Titular_Boca_Juniors_25-26_Azul_JJ4286_01_laydown.jpg",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Adidas"
+    },
+    {
+        name: "Camiseta Puma Independiente Titular 24/25 de Hombre",
+        description: "Camiseta oficial Puma Independiente 2023/2024, tela dryCELL.",
+        price: "$69.999",
+        image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dw77b9ad27/products/PU693681-01/PU693681-01-1.JPG",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Puma"
+    },
+    {
+        name: "Botines Adidas Predator League FG",
+        description: "Botines Adidas Predator League para césped natural. Parte superior sintética con textura para mayor control del balón.",
+        price: "$199.999",
+        image: "https://production.cdn.vaypol.com/variants/anwzc7it4acm4w1wnck315nywcih/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
+        category: "botines",
+        marca: "Adidas"
+    },
+    {
+        name: "Botines Nike Mercurial Vapor 16 Elite",
+        description: "Botines Fútbol Nike Mercurial Vapor 16 Elite FG Hombre.",
+        price: "$199.999",
+        image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dw4350bb95/products/NIFQ1457-800/NIFQ1457-800-1.JPG",
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
+        category: "botines",
+        marca: "Nike"
+    },
+    {
+        name: "Botines Puma Future 7 Pro FG/AG",
+        description: "Botines Puma Future 7 Pro para césped natural y sintético. Ajuste adaptable y excelente tracción.",
+        price: "$149.999",
+        image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa/global/107715/01/sv01/fnd/ARG/w/1000/h/1000/fmt/png/Botines-FUTURE-7-Pro-FG/AG",
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
+        category: "botines",
+        marca: "Puma"
+    },
+    {
+        name: "Botines Adidas F50 Elite - Terreno Firme (Coral)",
+        description: "Botines Adidas F50 Elite para césped natural, diseño ligero y máxima velocidad.",
+        price: "$299.999",
+        image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/1eb82bc423a3494fb622aa9791fdeed3_9366/Botines_F50_Elite_para_terreno_firme_Naranja_JH7618_HM1.jpg",
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
+        category: "botines",
+        marca: "Adidas"
+    },
+    {
+        name: "Botines Adidas F50 Elite - Terreno Firme (Lila/Verde)",
+        description: "Botines Adidas F50 Elite para césped natural, máxima velocidad, colores vibrantes.",
+        price: "$299.999",
+        image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/91f142e473404e57bc06ace8ab1101c5_9366/Botines_F50_Elite_terreno_firme_Violeta_JH7615_HM1.jpg",
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
+        category: "botines",
+        marca: "Adidas"
+    },
+    {
+        name: "Botines Nike Phantom 6 Low Elite (Verde/Negro)",
+        description: "Botines de Pasto Natural Unisex FG Nike Phantom para precisión y control élite.",
+        price: "$399.999",
+        image: "https://nikearprod.vtexassets.com/arquivos/ids/1548257-1200-1200?width=1200&height=1200&aspect=true",
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45, 46],
+        category: "botines",
+        marca: "Nike"
+    },
+    {
+        name: "Botines Nike Phantom 6 Low Elite (Blanco/Rojo)",
+        description: "Botines de Pasto Natural Unisex FG Nike Phantom para precisión y control élite.",
+        price: "$379.999",
+        image: "https://nikearprod.vtexassets.com/arquivos/ids/1548306-1200-1200?width=1200&height=1200&aspect=true",
+        category: "botines",
+        marca: "Nike"
+    },
+    // Camisetas nuevas 25/26
+    {
+        name: "Camiseta Titular Real Madrid 24/25",
+        description: "Camiseta oficial Adidas Real Madrid temporada 2024/2025.",
+        price: "$109.999",
+        image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRogaCIKvwRzYHX6Hlj3S7I7miNLTwM6c3OMmZBwGaA3aEH1aSwk8gL-q7g2c2D_9xtdFBA-N2OEWbYxfOmLRDBiuQaPb1_-zppyKNhBhsL67eoggu3eIFrj0GM-pUx1VqFgokuHKClpk8&usqp=CAc",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Adidas"
+    },
+    {
+        name: "Camiseta adidas Suplente River Plate 25/26",
+        description: "Camiseta oficial Adidas Suplente River Plate 2025/2026",
+        price: "$89.999",
+        image: "https://sportline.vtexassets.com/arquivos/ids/1605448-1200-auto?v=638853912797670000&width=1200&height=auto&aspect=true",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Adidas"
+    },
+    {
+        name: "Camiseta adidas Titular River Plate 25/26",
+        description: "Camiseta adidas Titular River Plate 25/26 - BLANCO / ROJO",
+        price: "$119.999",
+        image: "https://production.cdn.vaypol.com/variants/gs29wghpjb9j3lz4apn7aedt2025/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Adidas"
+    },
 
-  // Camisetas retro de equipos
-  {
-    name: "Camiseta Retro Boca Juniors 1981",
-    description: "Camiseta retro Boca Juniors 1981, homenaje a la era de Maradona.",
-    price: "$89.999",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_709650-MLA76757391603_052024-F.webp",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "retro",
-    brand: "Retro"
-  },
-  {
-    name: "Camiseta Retro AC Milan 1994",
-    description: "Camiseta retro AC Milan 1994, campeón de Europa.",
-    price: "$79.999",
-    image: "https://http2.mlstatic.com/D_970411-MLA84005601119_042025-C.jpg",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "retro",
-    brand: "Retro"
-  },
+    // Camisetas retro de equipos
+    {
+        name: "Camiseta Retro Boca Juniors 1981",
+        description: "Camiseta retro Boca Juniors 1981, homenaje a la era de Maradona.",
+        price: "$89.999",
+        image: "https://http2.mlstatic.com/D_NQ_NP_2X_709650-MLA76757391603_052024-F.webp",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "retro",
+        marca: "Retro"
+    },
+    {
+        name: "Camiseta Retro AC Milan 1994",
+        description: "Camiseta retro AC Milan 1994, campeón de Europa.",
+        price: "$79.999",
+        image: "https://http2.mlstatic.com/D_970411-MLA84005601119_042025-C.jpg",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "retro",
+        marca: "Retro"
+    },
 
-  // Camisetas de países
-  {
-    name: "Camiseta Titular Brasil 2024",
-    description: "Camiseta oficial Nike Brasil 2024, tecnología Dri-FIT.",
-    price: "$79.999",
-    image: "https://www.ole.com.ar/images/2023/12/28/sHplKNs1ai_720x0__1.jpg",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Nike"
-  },
-  {
-    name: "Camiseta Retro Francia 1998",
-    description: "Camiseta retro Francia 1998, campeón del mundo.",
-    price: "$89.999",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuxtahL8ESkvUkT6__9hS3FQg3xLaoC-_DBA&s",
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    category: "camiseta",
-    brand: "Retro"
-  },
+    // Camisetas de países
+    {
+        name: "Camiseta Titular Brasil 2024",
+        description: "Camiseta oficial Nike Brasil 2024, tecnología Dri-FIT.",
+        price: "$79.999",
+        image: "https://www.ole.com.ar/images/2023/12/28/sHplKNs1ai_720x0__1.jpg",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Nike"
+    },
+    {
+        name: "Camiseta Retro Francia 1998",
+        description: "Camiseta retro Francia 1998, campeón del mundo.",
+        price: "$89.999",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuxtahL8ESkvUkT6__9hS3FQg3xLaoC-_DBA&s",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        category: "camiseta",
+        marca: "Retro"
+    },
 
-  // Pelotas de fútbol de torneos importantes
-  {
-    name: "Pelota adidas Fifa Club World Cup Pro 2025",
-    description: "Esta Pelota adidas Fifa Club World Cup Pro 2025 rinde homenaje al anfitrión de la competencia con un diseño inspirado en las banderas ondeantes y envuelto en las barras y estrellas.",
-    price: "$19.999",
-    image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dwae33f67e/products/ADJE8770/ADJE8770-1.JPG",
-    sizes: ["5"],
-    category: "pelota",
-    brand: "Adidas"
-  },
-  {
-    name: "Pelota adidas Ucl Training - VERDE / BLANCO",
-    description: "Pelota oficial Adidas UEFA Champions League 2023/2024, máxima calidad y rendimiento.",
-    price: "$39.999",
-    image: "https://production.cdn.vaypol.com/variants/3zn4ommy34tdjj7s0qnjts2n9xqw/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
-    sizes: ["5"],
-    category: "pelota",
-    brand: "Adidas"
-  },
-  {
-    name: "Pelota Premier League Academy",
-    description: "Pelota oficial Nike Flight Premier League 2024, tecnología Aerowsculpt para vuelo preciso.",
-    price: "$29.999",
-    image: "https://nikearprod.vtexassets.com/arquivos/ids/1066925-1200-1200?width=1200&height=1200&aspect=true",
-    sizes: ["5"],
-    category: "pelota",
-    brand: "Nike"
-  },
-  {
-    name: "Pelota Nike Ordem Copa América 2024",
-    description: "Pelota oficial Nike Ordem Copa América 2024, diseño exclusivo para el torneo.",
-    price: "$39.999",
-    image: "https://acdn-us.mitiendanube.com/stores/003/924/927/products/pelota-copa-americaa-ac8eefef652195eb1c17171891252189-480-0.jpg",
-    sizes: ["5"],
-    category: "pelota",
-    brand: "Nike"
-  },
-  {
-    name: "Pelota Trionda Competition de la Copa Mundial de la FIFA 2026",
-    description: "Pelota oficial Adidas Trionda Competition de la Copa Mundial de la FIFA 2026, diseño de alto rendimiento.",
-    price: "$99.999",
-    image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/3a5965320eeb418bb674cc98e81c7f6a_9366/Pelota_Trionda_Competition_de_la_Copa_Mundial_de_la_FIFA_2026tm_Blanco_JD8031_01_00_standard.jpg",
-    sizes: ["5"],
-    category: "pelota",
-    brand: "Adidas"
-  },
+    // Pelotas de fútbol de torneos importantes
+    {
+        name: "Pelota adidas Fifa Club World Cup Pro 2025",
+        description: "Esta Pelota adidas Fifa Club World Cup Pro 2025 rinde homenaje al anfitrión de la competencia con un diseño inspirado en las banderas ondeantes y envuelto en las barras y estrellas.",
+        price: "$19.999",
+        image: "https://www.dexter.com.ar/on/demandware.static/-/Sites-365-dabra-catalog/default/dwae33f67e/products/ADJE8770/ADJE8770-1.JPG",
+        sizes: ["5"],
+        category: "pelota",
+        marca: "Adidas"
+    },
+    {
+        name: "Pelota adidas Ucl Training - VERDE / BLANCO",
+        description: "Pelota oficial Adidas UEFA Champions League 2023/2024, máxima calidad y rendimiento.",
+        price: "$39.999",
+        image: "https://production.cdn.vaypol.com/variants/3zn4ommy34tdjj7s0qnjts2n9xqw/e82c8d6171dd25bb538f2e7263b5bc7dfc6a79352d85923074be76df53fbc6f4",
+        sizes: ["5"],
+        category: "pelota",
+        marca: "Adidas"
+    },
+    {
+        name: "Pelota Premier League Academy",
+        description: "Pelota oficial Nike Flight Premier League 2024, tecnología Aerowsculpt para vuelo preciso.",
+        price: "$29.999",
+        image: "https://nikearprod.vtexassets.com/arquivos/ids/1066925-1200-1200?width=1200&height=1200&aspect=true",
+        sizes: ["5"],
+        category: "pelota",
+        marca: "Nike"
+    },
+    {
+        name: "Pelota Nike Ordem Copa América 2024",
+        description: "Pelota oficial Nike Ordem Copa América 2024, diseño exclusivo para el torneo.",
+        price: "$39.999",
+        image: "https://acdn-us.mitiendanube.com/stores/003/924/927/products/pelota-copa-americaa-ac8eefef652195eb1c17171891252189-480-0.jpg",
+        sizes: ["5"],
+        category: "pelota",
+        marca: "Nike"
+    },
+    {
+        name: "Pelota Trionda Competition de la Copa Mundial de la FIFA 2026",
+        description: "Pelota oficial Adidas Trionda Competition de la Copa Mundial de la FIFA 2026, diseño de alto rendimiento.",
+        price: "$99.999",
+        image: "https://assets.adidas.com/images/h_2000,f_auto,q_auto,fl_lossy,c_fill,g_auto/3a5965320eeb418bb674cc98e81c7f6a_9366/Pelota_Trionda_Competition_de_la_Copa_Mundial_de_la_FIFA_2026tm_Blanco_JD8031_01_00_standard.jpg",
+        sizes: ["5"],
+        category: "pelota",
+        marca: "Adidas"
+    },
 ];
 
 // Nota: Ya no fijamos WORLD_CUP_BALL desde productsData.
@@ -395,9 +395,13 @@ const Home = () => {
         FUNCIONES DE FILTRADO Y BÚSQUEDA
     ---------------------------------------------------------------------- */
 
-    // Filtra por marca
+    // Helper para obtener la marca desde objetos que vengan de la API (brand)
+    // o desde los mocks locales (marca). Esto mantiene compatibilidad sin tocar el backend.
+    const getBrand = (prod) => (prod && (prod.brand || prod.marca)) || '';
+
+    // Filtra por marca (usa getBrand para soporte mixto)
     const handleFilterByBrand = (brand) => {
-        setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => prod.brand === brand));
+        setProducts((allProducts && allProducts.length ? allProducts : productsData).filter(prod => getBrand(prod) === brand));
         setSearchInput("");
         setShowSuggestions(false);
         setShowMenu(false);
@@ -430,7 +434,7 @@ const Home = () => {
                     prod.name.toLowerCase().includes(searchTerm) ||
                     prod.description.toLowerCase().includes(searchTerm) ||
                     prod.category.toLowerCase().includes(searchTerm) ||
-                    prod.brand.toLowerCase().includes(searchTerm) 
+                    (getBrand(prod) || '').toLowerCase().includes(searchTerm) 
             ).slice(0, 8); 
 
             setSuggestions(filteredSuggestions);
@@ -622,7 +626,7 @@ const Home = () => {
                                     <FaSearch size={14} className="me-2 text-muted" />
                                     <div>
                                         <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: primaryColor }}>{product.name}</div>
-                                        <div style={{ fontSize: '0.8rem', color: '#666' }}>Marca: {product.brand}</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#666' }}>Marca: {getBrand(product)}</div>
                                     </div>
                                 </div>
                             ))}

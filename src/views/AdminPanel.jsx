@@ -80,7 +80,8 @@ export default function AdminPanel() {
             stock: p.stock || 0,
             image: p.image || '',
             category: p.category || '',
-            marca: p.marca || ''
+            // Soportar objetos que vengan con 'marca' (local) o 'brand' (backend)
+            marca: p.marca || p.brand || ''
         });
         setShowForm(true);
     };
@@ -100,7 +101,9 @@ export default function AdminPanel() {
             // Asegurarnos que price tenga solo 2 decimales y que marca/description estén presentes
             const priceNum = Number.isFinite(parseFloat(form.price)) ? parseFloat(parseFloat(form.price).toFixed(2)) : 0;
             const stockNum = parseInt(form.stock || 0, 10) || 0;
+            // Asegurarnos de enviar también la propiedad 'brand' que espera el backend
             const payload = { ...form, price: priceNum, stock: stockNum };
+            if (!payload.brand && payload.marca) payload.brand = payload.marca;
             const url = `${API_BASE}/products/${editing ? (editing.product_id || editing.id || editing.pk) + '/' : ''}`;
             const method = editing ? 'PATCH' : 'POST';
             const r = await authFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });

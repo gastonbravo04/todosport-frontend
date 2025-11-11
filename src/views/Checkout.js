@@ -13,7 +13,7 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
     const FREE_SHIPPING_THRESHOLD = 149999; // Gratis a partir de este subtotal
     const [payment, setPayment] = useState("");
     const [cardType, setCardType] = useState('debit'); // 'debit' | 'credit'
-    const [cardBrand, setCardBrand] = useState('visa'); // 'visa' | 'mastercard' | 'other'
+    const [cardMarca, setCardMarca] = useState('visa'); // 'visa' | 'mastercard' | 'other'
     const [installments, setInstallments] = useState(1); // número de cuotas (si aplica)
     const [formData, setFormData] = useState({}); // Estado para datos del formulario de envío y pago
 
@@ -139,7 +139,7 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
     };
 
     // Detecta marca básica por BIN
-    const detectBrand = (digits) => {
+    const detectmarca = (digits) => {
         if (/^4/.test(digits)) return 'visa';
         if (/^(5[1-5]|2[2-7])/.test(digits)) return 'mastercard';
         return 'other';
@@ -164,8 +164,8 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
         if (newCursor > display.length) newCursor = display.length;
 
         setFormData(prevState => ({ ...prevState, cardNumber: digits, cardNumberDisplay: display }));
-        const brand = detectBrand(digits);
-        setCardBrand(brand);
+        const marca = detectmarca(digits);
+        setCardMarca(marca);
 
         if (digits.length >= 13) {
             const valid = luhnCheck(digits);
@@ -180,7 +180,7 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
 
         // Autofocus al vencimiento cuando completan la longitud típica
         try {
-            const done = (brand === 'visa' || brand === 'mastercard') ? digits.length === 16 : digits.length === 19;
+            const done = (marca === 'visa' || marca === 'mastercard') ? digits.length === 16 : digits.length === 19;
             if (done && expiryRef.current) expiryRef.current.focus();
         } catch {}
     };
@@ -192,7 +192,7 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
         const display = groups ? groups.join(' ') : '';
         e.preventDefault();
         setFormData(prev => ({ ...prev, cardNumber: digits, cardNumberDisplay: display }));
-        setCardBrand(detectBrand(digits));
+        setCardMarca(detectmarca(digits));
         setCardNumberError(digits.length >= 13 && !luhnCheck(digits) ? 'Número de tarjeta inválido' : null);
     };
 
@@ -294,7 +294,7 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
                 <>
                     <div className="mb-3">
                         <label className="form-label">Marca de la tarjeta</label>
-                        <select className="form-select" value={cardBrand} onChange={(e) => setCardBrand(e.target.value)}>
+                        <select className="form-select" value={cardMarca} onChange={(e) => setCardMarca(e.target.value)}>
                             <option value="visa">Visa</option>
                             <option value="mastercard">Mastercard</option>
                             <option value="other">Otra</option>
@@ -310,7 +310,7 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
                             {/* Promoción: 3 cuotas sin interés (bancos seleccionados) */}
                             <option value={3}>3 cuotas sin interés</option>
                             {/* 6 cuotas: puede ser sin interés o fijas según marca */}
-                            <option value={6}>{cardBrand === 'visa' || cardBrand === 'mastercard' ? '6 cuotas fijas' : '6 cuotas (sin interés con bancos seleccionados)'}</option>
+                            <option value={6}>{cardMarca === 'visa' || cardMarca === 'mastercard' ? '6 cuotas fijas' : '6 cuotas (sin interés con bancos seleccionados)'}</option>
                             {/* Oferta extendida: 12 como opción genérica */}
                             <option value={12}>12 cuotas</option>
                         </select>
@@ -345,7 +345,7 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
                     shipping: Number(shippingCharge.toFixed(2)),
                     payment_method: payment,
                     card_type: payment === 'Tarjeta' ? cardType : null,
-                    card_brand: payment === 'Tarjeta' ? cardBrand : null,
+                    card_brand: payment === 'Tarjeta' ? cardMarca : null,
                     installments: payment === 'Tarjeta' ? installments : 1,
                     // datos mínimos para crear/relacionar un Customer invitado si no hay auth
                     first_name: formData.firstName,
@@ -408,7 +408,7 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
                     customer: formData,
                     payment_method: payment,
                     card_type: payment === 'Tarjeta' ? cardType : null,
-                    card_brand: payment === 'Tarjeta' ? cardBrand : null,
+                    card_brand: payment === 'Tarjeta' ? cardMarca : null,
                     installments: payment === 'Tarjeta' ? installments : 1,
                 };
 
@@ -562,7 +562,7 @@ const API_BASE = 'https://todosport-production.up.railway.app/api';
                                         <div>
                                             {cardType === 'credit' ? (
                                                 <span>
-                                                    Crédito - {installments} {installments === 1 ? 'cuota' : 'cuotas'} {cardBrand ? `(${cardBrand.toUpperCase()})` : ''}
+                                                    Crédito - {installments} {installments === 1 ? 'cuota' : 'cuotas'} {cardMarca ? `(${cardMarca.toUpperCase()})` : ''}
                                                 </span>
                                             ) : (
                                                 <span>Débito</span>

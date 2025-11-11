@@ -30,7 +30,8 @@ export const ProductProvider = ({ children }) => {
                 image: p.image || '',
                 sizes: p.sizes || ['Único'],
                 category: p.category || '',
-                marca: p.marca || '',
+                // Soportar tanto 'marca' local como 'brand' que pueda venir del backend
+                marca: p.marca || p.brand || '',
                 stock: Number.isFinite(p.stock) ? p.stock : 0,
             }));
             setAllProducts(mapped);
