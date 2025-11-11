@@ -30,7 +30,7 @@ export const ProductProvider = ({ children }) => {
                 image: p.image || '',
                 sizes: p.sizes || ['Único'],
                 category: p.category || '',
-                brand: p.brand || '',
+                marca: p.marca || '',
                 stock: Number.isFinite(p.stock) ? p.stock : 0,
             }));
             setAllProducts(mapped);

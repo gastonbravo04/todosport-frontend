@@ -16,7 +16,7 @@ export default function AdminPanel() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState(null);
-    const [form, setForm] = useState({ name: '', description: '', price: 0, stock: 0, image: '', category: '', brand: '' });
+    const [form, setForm] = useState({ name: '', description: '', price: 0, stock: 0, image: '', category: '', marca: '' });
 
     // API base (usa la variable de entorno si está definida, si no usa Railway)
     const API_BASE = process.env.REACT_APP_API_BASE_URL || 'https://todosport-production.up.railway.app/api';
@@ -67,7 +67,7 @@ export default function AdminPanel() {
 
     const handleShowCreate = () => {
         setEditing(null);
-        setForm({ name: '', description: '', price: 0, stock: 0, image: '', category: '', brand: '' });
+        setForm({ name: '', description: '', price: 0, stock: 0, image: '', category: '', marca: '' });
         setShowForm(true);
     };
 
@@ -80,7 +80,7 @@ export default function AdminPanel() {
             stock: p.stock || 0,
             image: p.image || '',
             category: p.category || '',
-            brand: p.brand || ''
+            marca: p.marca || ''
         });
         setShowForm(true);
     };
@@ -97,7 +97,7 @@ export default function AdminPanel() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Asegurarnos que price tenga solo 2 decimales y que brand/description estén presentes
+            // Asegurarnos que price tenga solo 2 decimales y que marca/description estén presentes
             const priceNum = Number.isFinite(parseFloat(form.price)) ? parseFloat(parseFloat(form.price).toFixed(2)) : 0;
             const stockNum = parseInt(form.stock || 0, 10) || 0;
             const payload = { ...form, price: priceNum, stock: stockNum };
@@ -212,7 +212,7 @@ export default function AdminPanel() {
                                 <h5>Datos del Pago</h5>
                                 <p><strong>Total:</strong> ${parseFloat(selectedOrder.total || 0).toFixed(2)}</p>
                                 <p><strong>Estado:</strong> {selectedOrder.status}</p>
-                                <p><strong>Método:</strong> {selectedOrder.card_brand ? `${selectedOrder.card_brand} (crédito)` : (selectedOrder.payment_method || 'No especificado')}</p>
+                                <p><strong>Método:</strong> {selectedOrder.card_marca ? `${selectedOrder.card_marca} (crédito)` : (selectedOrder.payment_method || 'No especificado')}</p>
                                 <p><strong>Cuotas:</strong> {selectedOrder.installments || 'N/A'}</p>
                             </Col>
                         </Row>
@@ -256,7 +256,7 @@ export default function AdminPanel() {
                             <Col><Form.Group className="mb-2"><Form.Label>Categoria</Form.Label><Form.Control value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} /></Form.Group></Col>
                         </Row>
                         <Form.Group className="mb-2"><Form.Label>Imagen (URL)</Form.Label><Form.Control value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} /></Form.Group>
-                        <Form.Group className="mb-2"><Form.Label>Brand</Form.Label><Form.Control required value={form.brand} onChange={e => setForm({ ...form, brand: e.target.value })} /></Form.Group>
+                        <Form.Group className="mb-2"><Form.Label>Marca</Form.Label><Form.Control required value={form.marca} onChange={e => setForm({ ...form, marca: e.target.value })} /></Form.Group>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={() => setShowForm(false)}>Cancelar</Button>
