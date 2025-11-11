@@ -32,7 +32,7 @@ export default function AdminPanel() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [API_BASE]);
 
     const fetchOrders = React.useCallback(async () => {
         try {
@@ -49,7 +49,7 @@ export default function AdminPanel() {
         } catch (e) {
             console.error(e);
         }
-    }, [authFetch]);
+    }, [authFetch, API_BASE]);
 
     const handleOrderClick = (order) => {
         setSelectedOrder(order);
